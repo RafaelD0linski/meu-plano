@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plano — Secar → Ganhar Massa</title>
+<style>
+:root{
+  --bg:#eef1f5; --card:#ffffff; --text:#141b26; --muted:#5b6675;
+  --line:#e3e7ee; --line-strong:#cdd4de;
+  --accent:#111827; --accent-2:#2563eb;
+  --good:#16a34a; --warn:#d97706; --bad:#dc2626;
+  --chip:#eef2f8; --chip-text:#33415c;
+  --shadow:0 1px 2px rgba(16,24,40,.04),0 8px 24px rgba(16,24,40,.06);
+  --radius:18px;
+}
+:root[data-theme="dark"], :root:not([data-theme="light"]) {}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d1117; --card:#161c26; --text:#e7edf5; --muted:#93a1b3;
+    --line:#232c39; --line-strong:#303c4d;
+    --accent:#0b1220; --accent-2:#4f8cff;
+    --good:#34d399; --warn:#fbbf24; --bad:#f87171;
+    --chip:#1e2733; --chip-text:#b9c6d6;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d1117; --card:#161c26; --text:#e7edf5; --muted:#93a1b3;
+  --line:#232c39; --line-strong:#303c4d;
+  --accent:#0b1220; --accent-2:#4f8cff;
+  --good:#34d399; --warn:#fbbf24; --bad:#f87171;
+  --chip:#1e2733; --chip-text:#b9c6d6;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);line-height:1.55;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased}
+.container{max-width:1000px;margin:auto;padding:26px 18px 70px}
+
+/* ---- Top bar ---- */
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;
+  background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(10px);
+  padding:10px 14px;border:1px solid var(--line);border-radius:14px;margin-bottom:18px;box-shadow:var(--shadow)}
+.brand{font-weight:800;letter-spacing:.3px;font-size:14px}
+.nav{display:flex;gap:4px;overflow-x:auto;flex:1;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav a{white-space:nowrap;text-decoration:none;color:var(--muted);font-size:13px;
+  padding:6px 10px;border-radius:9px;font-weight:600}
+.nav a:hover{color:var(--text);background:var(--chip)}
+.iconbtn{border:1px solid var(--line-strong);background:var(--card);color:var(--text);
+  width:36px;height:36px;border-radius:10px;cursor:pointer;font-size:16px;display:grid;place-items:center;flex:0 0 auto}
+.iconbtn:hover{border-color:var(--accent-2)}
+
+/* ---- Hero ---- */
+.hero{position:relative;overflow:hidden;color:#fff;border-radius:var(--radius);padding:34px 30px;margin-bottom:20px;
+  background:linear-gradient(135deg,#111827 0%,#1f2937 55%,#2563eb 160%)}
+.hero::after{content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;border-radius:50%;
+  background:radial-gradient(circle,rgba(79,140,255,.35),transparent 70%)}
+.hero h1{margin:0 0 8px;font-size:clamp(24px,4vw,34px);letter-spacing:.5px;font-weight:800}
+.subtitle{opacity:.82;max-width:640px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:22px;position:relative}
+.stat{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);padding:14px 16px;border-radius:14px}
+.stat span{font-size:12px;text-transform:uppercase;letter-spacing:.6px;opacity:.75}
+.stat b{display:block;font-size:22px;margin-top:4px;font-weight:800}
+
+/* ---- Cards ---- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:24px 26px;margin:16px 0;box-shadow:var(--shadow);scroll-margin-top:70px}
+h2{margin:0 0 14px;font-size:22px;font-weight:800;display:flex;align-items:center;gap:10px}
+h3{margin:20px 0 10px;font-size:15px;font-weight:700;color:var(--text)}
+p{margin:10px 0}
+
+/* ---- Table ---- */
+.tablewrap{overflow-x:auto;border-radius:12px;border:1px solid var(--line)}
+table{width:100%;border-collapse:collapse;min-width:480px}
+th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);font-size:14px}
+th{background:var(--chip);font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
+tr:last-child td{border-bottom:none}
+td b{color:var(--accent-2)}
+
+/* ---- Note / callouts ---- */
+.note{background:color-mix(in srgb,var(--accent-2) 8%,transparent);
+  border-left:4px solid var(--accent-2);padding:13px 16px;border-radius:10px;margin-top:14px;font-size:14px}
+.signals{display:grid;gap:8px;margin-top:14px}
+.signal{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:12px;border:1px solid var(--line);font-size:14px}
+.signal .dot{width:12px;height:12px;border-radius:50%;margin-top:5px;flex:0 0 auto}
+.dot.g{background:var(--good)}.dot.y{background:var(--warn)}.dot.r{background:var(--bad)}
+
+/* ---- Workout ---- */
+.days{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.day{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card)}
+.day-head{padding:12px 15px;font-weight:700;font-size:14px;color:#fff;
+  background:linear-gradient(135deg,#1f2937,#374151)}
+.day:nth-child(2) .day-head{background:linear-gradient(135deg,#1e3a8a,#2563eb)}
+.day:nth-child(3) .day-head{background:linear-gradient(135deg,#065f46,#059669)}
+.day:nth-child(4) .day-head{background:linear-gradient(135deg,#7c2d12,#c2410c)}
+.day:nth-child(5) .day-head{background:linear-gradient(135deg,#4c1d95,#7c3aed)}
+.exercise{display:flex;justify-content:space-between;gap:10px;padding:9px 15px;border-bottom:1px solid var(--line);font-size:13.5px}
+.exercise:last-child{border-bottom:none}
+.exercise .sets{color:var(--muted);font-weight:700;white-space:nowrap}
+.week{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.week .tag{background:var(--chip);color:var(--chip-text);font-weight:600}
+
+/* ---- Tags ---- */
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.tag{display:inline-block;background:var(--chip);color:var(--chip-text);
+  padding:6px 11px;border-radius:9px;margin:3px 3px 0 0;font-size:13px;font-weight:500}
+ul{padding-left:20px;margin:10px 0}li{margin:6px 0}
+.small{color:var(--muted);font-size:13.5px}
+
+/* ---- Checklist ---- */
+.progresswrap{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.bar{flex:1;height:9px;background:var(--chip);border-radius:99px;overflow:hidden}
+.bar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--good),var(--accent-2));transition:width .3s}
+.pct{font-weight:800;font-size:14px;min-width:42px;text-align:right}
+.check{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px dashed var(--line);cursor:pointer;user-select:none}
+.check:last-of-type{border-bottom:none}
+.check input{appearance:none;width:22px;height:22px;border:2px solid var(--line-strong);border-radius:7px;
+  cursor:pointer;flex:0 0 auto;position:relative;transition:.15s}
+.check input:checked{background:var(--good);border-color:var(--good)}
+.check input:checked::after{content:"✓";position:absolute;inset:0;color:#fff;font-size:14px;font-weight:900;display:grid;place-items:center}
+.check.done span{color:var(--muted);text-decoration:line-through}
+.reset{margin-top:14px;border:1px solid var(--line-strong);background:transparent;color:var(--muted);
+  padding:7px 12px;border-radius:9px;cursor:pointer;font-size:13px;font-weight:600}
+.reset:hover{color:var(--bad);border-color:var(--bad)}
+
+footer{text-align:center;color:var(--muted);font-size:13px;margin-top:24px;padding:0 10px}
+
+@media print{
+  body{background:#fff}.topbar,.iconbtn,.reset{display:none}
+  .container{max-width:none;padding:0}
+  .card,.hero,.day{break-inside:avoid;box-shadow:none}
+  .hero{color:#000;background:none;border:1px solid #000}
+  .hero::after{display:none}.stat{border:1px solid #ccc}.stat b,.hero h1{color:#000}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="topbar">
+  <span class="brand">🔥 PLANO</span>
+  <nav class="nav">
+    <a href="#objetivo">Objetivo</a>
+    <a href="#calorias">Calorias</a>
+    <a href="#treino">Treino</a>
+    <a href="#cardio">Cardio</a>
+    <a href="#dieta">Dieta</a>
+    <a href="#acompanhamento">Acompanhamento</a>
+    <a href="#bulk">Ganho de massa</a>
+    <a href="#checklist">Checklist</a>
+  </nav>
+  <button class="iconbtn" id="themeBtn" title="Alternar tema" aria-label="Alternar tema">🌙</button>
+  <button class="iconbtn" onclick="window.print()" title="Imprimir / PDF" aria-label="Imprimir">🖨️</button>
+</div>
+
+<section class="hero">
+  <h1>SECAR → GANHAR MASSA</h1>
+  <p class="subtitle">Plano de acompanhamento em duas fases: primeiro reduzir a gordura abdominal preservando o máximo de músculo, depois iniciar um ganho de massa controlado. Base inicial abaixo.</p>
+  <div class="grid">
+    <div class="stat"><span>Peso inicial</span><b>68,1 kg</b></div>
+    <div class="stat"><span>Altura</span><b>1,79 m</b></div>
+    <div class="stat"><span>Gordura</span><b>13,4%</b></div>
+    <div class="stat"><span>Proteína/dia</span><b>140–150 g</b></div>
+  </div>
+</section>
+
+<section class="card" id="objetivo">
+  <h2>🎯 Objetivo</h2>
+  <p>Primeiro reduzir a gordura abdominal preservando o máximo possível de massa muscular. Depois, sair do déficit, estabilizar o peso e iniciar um superávit pequeno para ganhar massa sem recuperar rapidamente a barriga.</p>
+</section>
+
+<section class="card" id="calorias">
+  <h2>🔥 Estratégia de calorias</h2>
+  <div class="tablewrap">
+  <table>
+    <tr><th>Fase</th><th>Calorias</th><th>Proteína</th><th>Gordura</th><th>Carboidrato</th></tr>
+    <tr><td>Início (semanas 1–2)</td><td><b>2.400 kcal</b></td><td>150 g</td><td>65 g</td><td>~304 g</td></tr>
+    <tr><td>Se necessário</td><td><b>2.200 kcal</b></td><td>150 g</td><td>60 g</td><td>~260 g</td></tr>
+    <tr><td>Somente se necessário</td><td><b>2.000 kcal</b></td><td>150 g</td><td>60 g</td><td>~210 g</td></tr>
+  </table>
+  </div>
+  <div class="note"><b>Regra:</b> não reduzir calorias automaticamente. Se peso médio e cintura estiverem descendo em ritmo adequado, mantenha a fase atual. Alvo razoável: aproximadamente <b>0,2–0,4 kg/semana</b>.</div>
+</section>
+
+<section class="card" id="treino">
+  <h2>🏋️ Divisão de musculação — 5 dias</h2>
+  <p class="small">Foco estético: ombros, costas, peito e braços, sem negligenciar pernas. Na maioria das séries, termine com aproximadamente <b>1–3 repetições em reserva</b>.</p>
+
+  <div class="days">
+    <div class="day">
+      <div class="day-head">Dia 1 · Peito + Ombros + Tríceps</div>
+      <div class="exercise"><span>Supino reto</span><span class="sets">3×6–10</span></div>
+      <div class="exercise"><span>Supino inclinado</span><span class="sets">3×8–12</span></div>
+      <div class="exercise"><span>Crossover / crucifixo</span><span class="sets">2×10–15</span></div>
+      <div class="exercise"><span>Desenvolvimento</span><span class="sets">3×6–10</span></div>
+      <div class="exercise"><span>Elevação lateral</span><span class="sets">4×10–15</span></div>
+      <div class="exercise"><span>Tríceps na polia</span><span class="sets">3×8–12</span></div>
+      <div class="exercise"><span>Tríceps francês / corda</span><span class="sets">2×10–15</span></div>
+    </div>
+
+    <div class="day">
+      <div class="day-head">Dia 2 · Costas + Bíceps + Abdômen</div>
+      <div class="exercise"><span>Puxada alta / barra</span><span class="sets">3×6–10</span></div>
+      <div class="exercise"><span>Remada</span><span class="sets">3×8–12</span></div>
+      <div class="exercise"><span>Remada unilateral</span><span class="sets">2×8–12</span></div>
+      <div class="exercise"><span>Pulldown braço estendido</span><span class="sets">2×10–15</span></div>
+      <div class="exercise"><span>Rosca direta</span><span class="sets">3×8–12</span></div>
+      <div class="exercise"><span>Rosca martelo</span><span class="sets">2×10–15</span></div>
+      <div class="exercise"><span>Crunch na polia / máquina</span><span class="sets">3×10–15</span></div>
+      <div class="exercise"><span>Elevação de pernas</span><span class="sets">3×8–15</span></div>
+    </div>
+
+    <div class="day">
+      <div class="day-head">Dia 3 · Pernas</div>
+      <div class="exercise"><span>Agachamento ou hack</span><span class="sets">3×6–10</span></div>
+      <div class="exercise"><span>Leg press</span><span class="sets">3×8–12</span></div>
+      <div class="exercise"><span>Cadeira extensora</span><span class="sets">2×10–15</span></div>
+      <div class="exercise"><span>Mesa flexora</span><span class="sets">3×8–12</span></div>
+      <div class="exercise"><span>Stiff / RDL</span><span class="sets">2×8–12</span></div>
+      <div class="exercise"><span>Panturrilha</span><span class="sets">4×10–15</span></div>
+    </div>
+
+    <div class="day">
+      <div class="day-head">Dia 4 · Ombros + Peito + Braços</div>
+      <div class="exercise"><span>Desenvolvimento</span><span class="sets">3×6–10</span></div>
+      <div class="exercise"><span>Elevação lateral</span><span class="sets">4×10–15</span></div>
+      <div class="exercise"><span>Crucifixo inverso</span><span class="sets">3×10–15</span></div>
+      <div class="exercise"><span>Supino inclinado</span><span class="sets">3×8–12</span></div>
+      <div class="exercise"><span>Crossover</span><span class="sets">2×10–15</span></div>
+      <div class="exercise"><span>Rosca inclinada</span><span class="sets">3×8–12</span></div>
+      <div class="exercise"><span>Tríceps testa / polia</span><span class="sets">3×8–12</span></div>
+    </div>
+
+    <div class="day">
+      <div class="day-head">Dia 5 · Costas + Posterior + Abdômen</div>
+      <div class="exercise"><span>Puxada neutra</span><span class="sets">3×8–12</span></div>
+      <div class="exercise"><span>Remada baixa</span><span class="sets">3×8–12</span></div>
+      <div class="exercise"><span>Remada unilateral</span><span class="sets">2×10–12</span></div>
+      <div class="exercise"><span>Mesa flexora</span><span class="sets">3×10–15</span></div>
+      <div class="exercise"><span>Stiff / RDL</span><span class="sets">3×6–10</span></div>
+      <div class="exercise"><span>Panturrilha</span><span class="sets">3×10–15</span></div>
+      <div class="exercise"><span>Abdominal reverso</span><span class="sets">3×10–15</span></div>
+      <div class="exercise"><span>Prancha</span><span class="sets">2×30–60s</span></div>
+    </div>
+  </div>
+
+  <div class="week">
+    <span class="tag">Seg · Dia 1</span>
+    <span class="tag">Ter · Dia 2</span>
+    <span class="tag">Qua · Dia 3</span>
+    <span class="tag">Qui · Descanso / cardio leve</span>
+    <span class="tag">Sex · Dia 4</span>
+    <span class="tag">Sáb · Dia 5</span>
+    <span class="tag">Dom · Descanso</span>
+  </div>
+
+  <div class="note"><b>Progressão:</b> use as faixas de repetições. Quando conseguir o topo da faixa em todas as séries com boa técnica, aumente um pouco a carga e volte para a parte baixa da faixa. Não sacrifique a execução para subir peso.</div>
+</section>
+
+<section class="card" id="cardio">
+  <h2>🚶 Cardio e atividade</h2>
+  <ul>
+    <li><b>3×/semana:</b> 20–30 minutos de caminhada rápida, além da musculação.</li>
+    <li>Intensidade moderada: consegue conversar, mas sente que está se exercitando.</li>
+    <li>Esteira como referência: ~5–6,5 km/h, ajustando ao condicionamento. Inclinação leve é opcional.</li>
+    <li><b>8–10 mil passos/dia</b> como meta média.</li>
+  </ul>
+  <p class="small">Não começar com 40–60 min de cardio diário. Aumentar apenas se o progresso pedir.</p>
+</section>
+
+<section class="card" id="dieta">
+  <h2>🥩 Alimentação</h2>
+  <p><b>Proteína:</b> 140–150 g/dia. Tente distribuir em 4 refeições com aproximadamente <b>25–40 g cada</b>.</p>
+  <div class="cols">
+    <div>
+      <h3>Boas fontes de proteína</h3>
+      <span class="tag">Frango</span><span class="tag">Patinho</span><span class="tag">Carnes magras</span><span class="tag">Ovos</span><span class="tag">Peixe</span><span class="tag">Atum</span><span class="tag">Leite</span><span class="tag">Iogurte</span><span class="tag">Whey</span><span class="tag">Feijão</span><span class="tag">Lentilha</span>
+    </div>
+    <div>
+      <h3>Vegetais / verduras</h3>
+      <span class="tag">Brócolis</span><span class="tag">Couve</span><span class="tag">Cenoura</span><span class="tag">Pimentão</span><span class="tag">Tomate</span><span class="tag">Espinafre</span><span class="tag">Abobrinha</span><span class="tag">Alface</span><span class="tag">Rúcula</span><span class="tag">Agrião</span><span class="tag">Cebola</span>
+    </div>
+  </div>
+  <p>Inclua também cerca de <b>2–3 porções de frutas por dia</b>, conforme preferência. Batata e batata-doce são boas fontes de carboidrato para quem treina.</p>
+</section>
+
+<section class="card" id="acompanhamento">
+  <h2>📏 Acompanhamento semanal</h2>
+  <ul>
+    <li><b>Peso:</b> pesar 3–7 manhãs por semana e usar a média semanal.</li>
+    <li><b>Cintura:</b> medir 1×/semana na altura do umbigo e, se quiser, no ponto mais estreito.</li>
+    <li><b>Fotos:</b> frente e lado, mesma iluminação/distância, a cada 2 semanas.</li>
+    <li><b>Treino:</b> registrar cargas e repetições.</li>
+  </ul>
+  <div class="signals">
+    <div class="signal"><span class="dot g"></span><span><b>Verde</b> — 0,2–0,4 kg/semana: mantenha as calorias.</span></div>
+    <div class="signal"><span class="dot y"></span><span><b>Amarelo</b> — sem queda relevante por ~2 semanas: considerar −200 kcal.</span></div>
+    <div class="signal"><span class="dot r"></span><span><b>Vermelho</b> — queda muito rápida + força caindo: déficit provavelmente excessivo, revisar.</span></div>
+  </div>
+  <div class="note">Sobre o <b>abdômen</b>: abdominais fortalecem e desenvolvem a musculatura, mas não queimam gordura especificamente na barriga. A redução abdominal virá principalmente do déficit energético, enquanto o treino ajuda a preservar/construir músculo.</div>
+</section>
+
+<section class="card" id="bulk">
+  <h2>💪 Depois de atingir a definição desejada</h2>
+  <p>Não saltar diretamente de 2.000 kcal para um grande superávit. Primeiro subir para a manutenção e observar onde o peso estabiliza. Depois iniciar um <b>lean bulk</b> com aproximadamente <b>+150–250 kcal/dia</b>, mirando ganho lento de <b>~0,1–0,25 kg/semana</b>.</p>
+</section>
+
+<section class="card" id="checklist">
+  <h2>✅ Checklist semanal</h2>
+  <div class="progresswrap">
+    <div class="bar"><i id="barFill"></i></div>
+    <span class="pct" id="pct">0%</span>
+  </div>
+  <div id="list">
+    <label class="check"><input type="checkbox"><span>Bati ~140–150 g de proteína na maioria dos dias</span></label>
+    <label class="check"><input type="checkbox"><span>Completei meus treinos de musculação</span></label>
+    <label class="check"><input type="checkbox"><span>Fiz 3 sessões de caminhada / cardio de 20–30 min</span></label>
+    <label class="check"><input type="checkbox"><span>Mantive ~8–10 mil passos/dia na média</span></label>
+    <label class="check"><input type="checkbox"><span>Registrei a média do peso</span></label>
+    <label class="check"><input type="checkbox"><span>Medi a cintura</span></label>
+    <label class="check"><input type="checkbox"><span>Registrei cargas / repetições</span></label>
+    <label class="check"><input type="checkbox"><span>Mantive sono e recuperação adequados</span></label>
+  </div>
+  <button class="reset" id="resetBtn">↺ Zerar semana</button>
+</section>
+
+<footer>
+  Observação: a bioimpedância varia com hidratação, alimentação, treino e horário. Use principalmente a <b>tendência de peso, cintura, fotos e desempenho no treino</b> para acompanhar a evolução.
+</footer>
+
+</div>
+
+<script>
+// ----- Tema -----
+(function(){
+  var root=document.documentElement, btn=document.getElementById('themeBtn');
+  try{var saved=localStorage.getItem('plano-tema'); if(saved) root.setAttribute('data-theme',saved);}catch(e){}
+  function sync(){
+    var dark = root.getAttribute('data-theme')==='dark' ||
+      (!root.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    btn.textContent = dark ? '☀️' : '🌙';
+  }
+  sync();
+  btn.addEventListener('click',function(){
+    var dark = root.getAttribute('data-theme')==='dark' ||
+      (!root.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    var next = dark ? 'light':'dark';
+    root.setAttribute('data-theme',next);
+    try{localStorage.setItem('plano-tema',next);}catch(e){}
+    sync();
+  });
+})();
+
+// ----- Checklist + progresso -----
+(function(){
+  var boxes=[].slice.call(document.querySelectorAll('#list input'));
+  var fill=document.getElementById('barFill'), pct=document.getElementById('pct');
+  function key(){var d=new Date();var o=(d.getDay()+6)%7;d.setDate(d.getDate()-o);return 'plano-check-'+d.toISOString().slice(0,10);}
+  function render(){
+    var done=boxes.filter(function(b){return b.checked;}).length;
+    var p=Math.round(done/boxes.length*100);
+    fill.style.width=p+'%'; pct.textContent=p+'%';
+    boxes.forEach(function(b){b.closest('.check').classList.toggle('done',b.checked);});
+  }
+  function save(){try{localStorage.setItem(key(),JSON.stringify(boxes.map(function(b){return b.checked;})));}catch(e){}}
+  function load(){try{var s=localStorage.getItem(key());if(s){var a=JSON.parse(s);boxes.forEach(function(b,i){b.checked=!!a[i];});}}catch(e){}}
+  load();render();
+  boxes.forEach(function(b){b.addEventListener('change',function(){save();render();});});
+  document.getElementById('resetBtn').addEventListener('click',function(){
+    boxes.forEach(function(b){b.checked=false;});save();render();
+  });
+})();
+</script>
+</body>
+</html>
