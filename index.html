@@ -99,9 +99,13 @@ td b{color:var(--accent-2)}
 .day:nth-child(3) .day-head{background:linear-gradient(135deg,#065f46,#059669)}
 .day:nth-child(4) .day-head{background:linear-gradient(135deg,#7c2d12,#c2410c)}
 .day:nth-child(5) .day-head{background:linear-gradient(135deg,#4c1d95,#7c3aed)}
-.exercise{display:flex;justify-content:space-between;gap:10px;padding:9px 15px;border-bottom:1px solid var(--line);font-size:13.5px}
+.exercise{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;padding:9px 15px;border-bottom:1px solid var(--line);font-size:13.5px}
 .exercise:last-child{border-bottom:none}
 .exercise .sets{color:var(--muted);font-weight:700;white-space:nowrap}
+.wlog{width:66px;text-align:center;font-size:13px;font-weight:700;color:var(--accent-2);
+  border:1px solid var(--line-strong);background:var(--bg);border-radius:8px;padding:5px 4px;font-family:inherit}
+.wlog:focus{outline:none;border-color:var(--accent-2)}
+.wlog::placeholder{color:var(--muted);font-weight:500}
 .week{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
 .week .tag{background:var(--chip);color:var(--chip-text);font-weight:600}
 
@@ -148,6 +152,7 @@ footer{text-align:center;color:var(--muted);font-size:13px;margin-top:24px;paddi
     <a href="#objetivo">Objetivo</a>
     <a href="#calorias">Calorias</a>
     <a href="#treino">Treino</a>
+    <a href="#registro">Registro</a>
     <a href="#cardio">Cardio</a>
     <a href="#dieta">Dieta</a>
     <a href="#acompanhamento">Acompanhamento</a>
@@ -259,7 +264,25 @@ footer{text-align:center;color:var(--muted);font-size:13px;margin-top:24px;paddi
     <span class="tag">Dom · Descanso</span>
   </div>
 
-  <div class="note"><b>Progressão:</b> use as faixas de repetições. Quando conseguir o topo da faixa em todas as séries com boa técnica, aumente um pouco a carga e volte para a parte baixa da faixa. Não sacrifique a execução para subir peso.</div>
+  <div class="note"><b>⚖️ Anote suas cargas:</b> use o campo <b>kg</b> ao lado de cada exercício para registrar o peso usado. Fica salvo no navegador e serve de referência para a próxima vez. <b>Progressão:</b> quando conseguir o topo da faixa em todas as séries com boa técnica, aumente um pouco a carga e volte para a parte baixa da faixa. Não sacrifique a execução para subir peso.</div>
+</section>
+
+<section class="card" id="registro">
+  <h2>🗓️ Registro de treinos da semana</h2>
+  <p class="small">Marque cada sessão ao concluir. O registro reinicia automaticamente toda segunda-feira.</p>
+  <div class="progresswrap">
+    <div class="bar"><i id="trainFill"></i></div>
+    <span class="pct" id="trainPct">0/5</span>
+  </div>
+  <div id="trainList">
+    <label class="check"><input type="checkbox"><span>Dia 1 · Peito + Ombros + Tríceps</span></label>
+    <label class="check"><input type="checkbox"><span>Dia 2 · Costas + Bíceps + Abdômen</span></label>
+    <label class="check"><input type="checkbox"><span>Dia 3 · Pernas</span></label>
+    <label class="check"><input type="checkbox"><span>Dia 4 · Ombros + Peito + Braços</span></label>
+    <label class="check"><input type="checkbox"><span>Dia 5 · Costas + Posterior + Abdômen</span></label>
+    <label class="check"><input type="checkbox"><span>Cardio / caminhada extra</span></label>
+  </div>
+  <button class="reset" id="trainReset">↺ Zerar semana</button>
 </section>
 
 <section class="card" id="cardio">
@@ -373,6 +396,48 @@ footer{text-align:center;color:var(--muted);font-size:13px;margin-top:24px;paddi
   boxes.forEach(function(b){b.addEventListener('change',function(){save();render();});});
   document.getElementById('resetBtn').addEventListener('click',function(){
     boxes.forEach(function(b){b.checked=false;});save();render();
+  });
+})();
+
+// ----- Registro de treinos da semana -----
+(function(){
+  var boxes=[].slice.call(document.querySelectorAll('#trainList input'));
+  var fill=document.getElementById('trainFill'), pct=document.getElementById('trainPct');
+  if(!boxes.length) return;
+  function key(){var d=new Date();var o=(d.getDay()+6)%7;d.setDate(d.getDate()-o);return 'plano-treino-'+d.toISOString().slice(0,10);}
+  function render(){
+    var done=boxes.filter(function(b){return b.checked;}).length;
+    fill.style.width=Math.round(done/boxes.length*100)+'%';
+    pct.textContent=done+'/'+boxes.length;
+    boxes.forEach(function(b){b.closest('.check').classList.toggle('done',b.checked);});
+  }
+  function save(){try{localStorage.setItem(key(),JSON.stringify(boxes.map(function(b){return b.checked;})));}catch(e){}}
+  function load(){try{var s=localStorage.getItem(key());if(s){var a=JSON.parse(s);boxes.forEach(function(b,i){b.checked=!!a[i];});}}catch(e){}}
+  load();render();
+  boxes.forEach(function(b){b.addEventListener('change',function(){save();render();});});
+  document.getElementById('trainReset').addEventListener('click',function(){
+    boxes.forEach(function(b){b.checked=false;});save();render();
+  });
+})();
+
+// ----- Registro de cargas (peso por exercício) -----
+(function(){
+  function slug(s){return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');}
+  [].forEach.call(document.querySelectorAll('.day'),function(day){
+    var head=day.querySelector('.day-head');
+    var dkey=head?slug(head.textContent):'d';
+    [].forEach.call(day.querySelectorAll('.exercise'),function(ex){
+      var name=ex.querySelector('span');
+      var k='plano-peso-'+dkey+'-'+slug(name?name.textContent:'');
+      var inp=document.createElement('input');
+      inp.type='text'; inp.inputMode='decimal'; inp.className='wlog'; inp.placeholder='kg';
+      inp.setAttribute('aria-label','Peso em kg');
+      try{var v=localStorage.getItem(k); if(v) inp.value=v;}catch(e){}
+      inp.addEventListener('input',function(){try{
+        if(inp.value.trim()) localStorage.setItem(k,inp.value.trim()); else localStorage.removeItem(k);
+      }catch(e){}});
+      ex.appendChild(inp);
+    });
   });
 })();
 </script>
