@@ -1,6 +1,6 @@
 // Service worker do "Meu Plano" — deixa o app funcionar offline.
 // Ao publicar mudanças, incremente a versão do cache abaixo.
-const CACHE = 'meu-plano-v3';
+const CACHE = 'meu-plano-v4';
 const ASSETS = [
   './',
   'index.html',

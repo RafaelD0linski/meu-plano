@@ -2,11 +2,11 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Plano — Secar → Ganhar Massa</title>
-<meta name="description" content="Plano de treino e dieta com registro de treinos e cargas, funcionando offline.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1">
+<title>Meu Plano — Treino & Dieta</title>
+<meta name="description" content="App pessoal de treino e dieta com registro de treinos, cargas e medidas, funcionando offline.">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#111827">
+<meta name="theme-color" content="#0b1220">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,527 +15,661 @@
 <meta name="apple-mobile-web-app-title" content="Meu Plano">
 <style>
 :root{
-  --bg:#eef1f5; --card:#ffffff; --text:#141b26; --muted:#5b6675;
-  --line:#e3e7ee; --line-strong:#cdd4de;
-  --accent:#111827; --accent-2:#2563eb;
+  --text:#0f1b2d; --muted:#59647a;
+  --line:rgba(16,24,40,.10);
+  --glass:rgba(255,255,255,.55);
+  --glass-2:rgba(255,255,255,.42);
+  --glass-brd:rgba(255,255,255,.65);
+  --accent:#2563eb; --accent-ink:#1e40af;
   --good:#16a34a; --warn:#d97706; --bad:#dc2626;
-  --chip:#eef2f8; --chip-text:#33415c;
-  --shadow:0 1px 2px rgba(16,24,40,.04),0 8px 24px rgba(16,24,40,.06);
-  --radius:18px;
+  --chip:rgba(37,99,235,.10); --chip-text:#1e40af;
+  --bg1:#e7effc; --bg2:#f3ebfb; --bg3:#e7f7f0;
+  --blob1:#7db0ff; --blob2:#c79cff; --blob3:#7ee0b8;
+  --shadow:0 10px 34px rgba(16,24,40,.14);
+  --radius:22px;
 }
-:root[data-theme="dark"], :root:not([data-theme="light"]) {}
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#0d1117; --card:#161c26; --text:#e7edf5; --muted:#93a1b3;
-    --line:#232c39; --line-strong:#303c4d;
-    --accent:#0b1220; --accent-2:#4f8cff;
+    --text:#e7edf5; --muted:#93a1b6;
+    --line:rgba(255,255,255,.10);
+    --glass:rgba(20,26,38,.55);
+    --glass-2:rgba(28,36,52,.48);
+    --glass-brd:rgba(255,255,255,.12);
+    --accent:#5b9bff; --accent-ink:#bcd3ff;
     --good:#34d399; --warn:#fbbf24; --bad:#f87171;
-    --chip:#1e2733; --chip-text:#b9c6d6;
-    --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+    --chip:rgba(91,155,255,.16); --chip-text:#bcd3ff;
+    --bg1:#0a1120; --bg2:#130f24; --bg3:#0a1a17;
+    --blob1:#1e3a8a; --blob2:#4c1d95; --blob3:#065f46;
+    --shadow:0 12px 36px rgba(0,0,0,.55);
   }
 }
 :root[data-theme="dark"]{
-  --bg:#0d1117; --card:#161c26; --text:#e7edf5; --muted:#93a1b3;
-  --line:#232c39; --line-strong:#303c4d;
-  --accent:#0b1220; --accent-2:#4f8cff;
+  --text:#e7edf5; --muted:#93a1b6;
+  --line:rgba(255,255,255,.10);
+  --glass:rgba(20,26,38,.55);
+  --glass-2:rgba(28,36,52,.48);
+  --glass-brd:rgba(255,255,255,.12);
+  --accent:#5b9bff; --accent-ink:#bcd3ff;
   --good:#34d399; --warn:#fbbf24; --bad:#f87171;
-  --chip:#1e2733; --chip-text:#b9c6d6;
-  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+  --chip:rgba(91,155,255,.16); --chip-text:#bcd3ff;
+  --bg1:#0a1120; --bg2:#130f24; --bg3:#0a1a17;
+  --blob1:#1e3a8a; --blob2:#4c1d95; --blob3:#065f46;
+  --shadow:0 12px 36px rgba(0,0,0,.55);
 }
 
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--text);line-height:1.55;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-  -webkit-font-smoothing:antialiased}
-.container{max-width:1000px;margin:auto;padding:26px 18px 70px}
+body{margin:0;color:var(--text);min-height:100vh;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.5;
+  background:linear-gradient(160deg,var(--bg1),var(--bg2) 52%,var(--bg3));
+  -webkit-font-smoothing:antialiased;overflow-x:hidden}
 
-/* ---- Top bar ---- */
-.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;
-  background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(10px);
-  padding:10px 14px;border:1px solid var(--line);border-radius:14px;margin-bottom:18px;box-shadow:var(--shadow)}
-.brand{font-weight:800;letter-spacing:.3px;font-size:14px}
-.nav{display:flex;gap:4px;overflow-x:auto;flex:1;scrollbar-width:none}
-.nav::-webkit-scrollbar{display:none}
-.nav a{white-space:nowrap;text-decoration:none;color:var(--muted);font-size:13px;
-  padding:6px 10px;border-radius:9px;font-weight:600}
-.nav a:hover{color:var(--text);background:var(--chip)}
-.iconbtn{border:1px solid var(--line-strong);background:var(--card);color:var(--text);
-  width:36px;height:36px;border-radius:10px;cursor:pointer;font-size:16px;display:grid;place-items:center;flex:0 0 auto}
-.iconbtn:hover{border-color:var(--accent-2)}
+/* blobs de fundo (dão o que "refratar" no vidro) */
+.blobs{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.blobs i{position:absolute;border-radius:50%;filter:blur(60px);opacity:.55}
+.blobs i:nth-child(1){width:340px;height:340px;background:var(--blob1);top:-80px;left:-60px}
+.blobs i:nth-child(2){width:300px;height:300px;background:var(--blob2);top:30%;right:-90px}
+.blobs i:nth-child(3){width:320px;height:320px;background:var(--blob3);bottom:-90px;left:20%}
 
-/* ---- Hero ---- */
-.hero{position:relative;overflow:hidden;color:#fff;border-radius:var(--radius);padding:34px 30px;margin-bottom:20px;
-  background:linear-gradient(135deg,#111827 0%,#1f2937 55%,#2563eb 160%)}
-.hero::after{content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;border-radius:50%;
-  background:radial-gradient(circle,rgba(79,140,255,.35),transparent 70%)}
-.hero h1{margin:0 0 8px;font-size:clamp(24px,4vw,34px);letter-spacing:.5px;font-weight:800}
-.subtitle{opacity:.82;max-width:640px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:22px;position:relative}
-.stat{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);padding:14px 16px;border-radius:14px}
-.stat span{font-size:12px;text-transform:uppercase;letter-spacing:.6px;opacity:.75}
-.stat b{display:block;font-size:22px;margin-top:4px;font-weight:800}
+.glass{background:var(--glass);-webkit-backdrop-filter:blur(22px) saturate(170%);backdrop-filter:blur(22px) saturate(170%);
+  border:1px solid var(--glass-brd);box-shadow:var(--shadow)}
 
-/* ---- Cards ---- */
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-  padding:24px 26px;margin:16px 0;box-shadow:var(--shadow);scroll-margin-top:70px}
-h2{margin:0 0 14px;font-size:22px;font-weight:800;display:flex;align-items:center;gap:10px}
-h3{margin:20px 0 10px;font-size:15px;font-weight:700;color:var(--text)}
-p{margin:10px 0}
+/* ---- App bar ---- */
+.appbar{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;align-items:center;gap:10px;
+  height:calc(54px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 12px 0;
+  border-left:none;border-right:none;border-top:none;border-radius:0}
+.appttl{font-weight:800;font-size:17px;flex:1;text-align:center;letter-spacing:.2px}
+.iconbtn{border:1px solid var(--line);background:var(--glass-2);color:var(--text);
+  width:40px;height:40px;border-radius:13px;cursor:pointer;font-size:17px;display:grid;place-items:center;flex:0 0 auto}
+.iconbtn:active{transform:scale(.94)}
 
-/* ---- Table ---- */
-.tablewrap{overflow-x:auto;border-radius:12px;border:1px solid var(--line)}
-table{width:100%;border-collapse:collapse;min-width:480px}
-th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);font-size:14px}
-th{background:var(--chip);font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
+/* ---- Drawer (menu lateral com abas) ---- */
+.drawer{position:fixed;top:0;bottom:0;left:0;z-index:60;width:80%;max-width:310px;
+  transform:translateX(-106%);transition:transform .28s cubic-bezier(.4,0,.2,1);
+  border-radius:0 26px 26px 0;padding:calc(22px + env(safe-area-inset-top)) 16px 22px;
+  display:flex;flex-direction:column;gap:6px}
+.drawer.open{transform:none}
+.drawer-brand{display:flex;align-items:center;gap:12px;padding:6px 8px 18px;margin-bottom:6px;border-bottom:1px solid var(--line)}
+.drawer-brand img{width:42px;height:42px;border-radius:12px}
+.drawer-brand b{font-size:16px}.drawer-brand span{display:block;font-size:12px;color:var(--muted)}
+.navitem{display:flex;align-items:center;gap:13px;width:100%;text-align:left;cursor:pointer;
+  border:1px solid transparent;background:transparent;color:var(--text);
+  padding:13px 14px;border-radius:14px;font-size:15px;font-weight:600;font-family:inherit}
+.navitem .ni{font-size:19px;width:24px;text-align:center}
+.navitem:active{transform:scale(.98)}
+.navitem.active{background:var(--chip);border-color:var(--line);color:var(--accent-ink)}
+.scrim{position:fixed;inset:0;z-index:55;background:rgba(6,10,20,.45);opacity:0;pointer-events:none;transition:.25s}
+.scrim.open{opacity:1;pointer-events:auto}
+
+/* ---- Screens ---- */
+main{max-width:760px;margin:0 auto;
+  padding:calc(66px + env(safe-area-inset-top)) 14px calc(96px + env(safe-area-inset-bottom))}
+.screen{display:none;animation:fade .32s ease}
+.screen.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.card{background:var(--glass-2);-webkit-backdrop-filter:blur(16px) saturate(150%);backdrop-filter:blur(16px) saturate(150%);
+  border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin:14px 0;box-shadow:var(--shadow)}
+.card:first-child{margin-top:0}
+h2{margin:0 0 12px;font-size:18px;font-weight:800;display:flex;align-items:center;gap:9px}
+h3{margin:16px 0 9px;font-size:14px;font-weight:700}
+p{margin:9px 0}
+.small{color:var(--muted);font-size:13.5px}
+
+/* hero */
+.hero{color:#fff;border:1px solid rgba(255,255,255,.18);border-radius:24px;padding:24px 22px;margin-bottom:14px;position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#1e3a8a,#2563eb 60%,#7c3aed)}
+.hero h1{margin:0 0 6px;font-size:24px;font-weight:800;letter-spacing:.3px}
+.hero p{opacity:.9;margin:0;font-size:14px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:18px}
+.stat{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:12px 14px}
+.stat span{font-size:11px;text-transform:uppercase;letter-spacing:.5px;opacity:.8}
+.stat b{display:block;font-size:19px;margin-top:3px;font-weight:800}
+
+/* tabela */
+.tablewrap{overflow-x:auto;border-radius:14px;border:1px solid var(--line)}
+table{width:100%;border-collapse:collapse;min-width:420px}
+th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);font-size:13.5px}
+th{background:var(--chip);font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
 tr:last-child td{border-bottom:none}
-td b{color:var(--accent-2)}
+td b{color:var(--accent)}
 
-/* ---- Note / callouts ---- */
-.note{background:color-mix(in srgb,var(--accent-2) 8%,transparent);
-  border-left:4px solid var(--accent-2);padding:13px 16px;border-radius:10px;margin-top:14px;font-size:14px}
-.signals{display:grid;gap:8px;margin-top:14px}
-.signal{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:12px;border:1px solid var(--line);font-size:14px}
-.signal .dot{width:12px;height:12px;border-radius:50%;margin-top:5px;flex:0 0 auto}
-.dot.g{background:var(--good)}.dot.y{background:var(--warn)}.dot.r{background:var(--bad)}
+.note{background:var(--chip);border-left:4px solid var(--accent);padding:12px 14px;border-radius:12px;margin-top:12px;font-size:13.5px}
 
-/* ---- Workout ---- */
-.days{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
-.day{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card)}
+/* dias de treino */
+.days{display:grid;gap:12px}
+.day{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--glass-2);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 .day-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 15px;font-weight:700;font-size:14px;color:#fff;
   background:linear-gradient(135deg,#1f2937,#374151)}
 .day:nth-child(2) .day-head{background:linear-gradient(135deg,#1e3a8a,#2563eb)}
 .day:nth-child(3) .day-head{background:linear-gradient(135deg,#065f46,#059669)}
 .day:nth-child(4) .day-head{background:linear-gradient(135deg,#7c2d12,#c2410c)}
 .day:nth-child(5) .day-head{background:linear-gradient(135deg,#4c1d95,#7c3aed)}
-.exercise{display:grid;grid-template-columns:auto minmax(0,1fr) auto 58px;align-items:center;gap:9px;padding:10px 14px;border-bottom:1px solid var(--line);font-size:13.5px}
+.daycount{font-size:12px;font-weight:800;background:rgba(255,255,255,.2);padding:3px 9px;border-radius:99px;white-space:nowrap}
+.exercise{display:grid;grid-template-columns:auto minmax(0,1fr) auto 56px;align-items:center;gap:9px;padding:11px 14px;border-bottom:1px solid var(--line);font-size:13.5px}
 .exercise:last-child{border-bottom:none}
 .exercise.done .exname{color:var(--muted);text-decoration:line-through}
 .exname{min-width:0;line-height:1.3}
 .exercise .sets{color:var(--muted);font-weight:700;white-space:nowrap;text-align:center;font-size:12px}
-.exdone{appearance:none;-webkit-appearance:none;width:22px;height:22px;margin:0;border:2px solid var(--line-strong);
-  border-radius:7px;cursor:pointer;flex:0 0 auto;position:relative;transition:.15s}
+.exdone{appearance:none;-webkit-appearance:none;width:23px;height:23px;margin:0;border:2px solid var(--line);
+  background:rgba(255,255,255,.5);border-radius:8px;cursor:pointer;position:relative;transition:.15s}
 .exdone:checked{background:var(--good);border-color:var(--good)}
-.exdone:checked::after{content:"✓";position:absolute;inset:0;color:#fff;font-size:13px;font-weight:900;display:grid;place-items:center}
-.wlog{width:58px;text-align:center;font-size:13px;font-weight:700;color:var(--accent-2);
-  border:1px solid var(--line-strong);background:var(--bg);border-radius:8px;padding:6px 4px;font-family:inherit}
-.wlog:focus{outline:none;border-color:var(--accent-2)}
+.exdone:checked::after{content:"✓";position:absolute;inset:0;color:#fff;font-size:14px;font-weight:900;display:grid;place-items:center}
+.wlog{width:56px;text-align:center;font-size:13px;font-weight:700;color:var(--accent);
+  border:1px solid var(--line);background:rgba(255,255,255,.5);border-radius:10px;padding:7px 4px;font-family:inherit}
+:root[data-theme="dark"] .wlog,:root[data-theme="dark"] .exdone{background:rgba(255,255,255,.06)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .wlog,:root:not([data-theme="light"]) .exdone{background:rgba(255,255,255,.06)}}
+.wlog:focus{outline:none;border-color:var(--accent)}
 .wlog::placeholder{color:var(--muted);font-weight:500}
-.daycount{font-size:12px;font-weight:800;background:rgba(255,255,255,.18);padding:3px 9px;border-radius:99px;white-space:nowrap}
-.week{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:16px}
-.week .tag{background:var(--chip);color:var(--chip-text);font-weight:600}
+.week{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin-top:14px}
 
-/* ---- Tags ---- */
-.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
-.tag{display:inline-block;background:var(--chip);color:var(--chip-text);
-  padding:6px 11px;border-radius:9px;margin:3px 3px 0 0;font-size:13px;font-weight:500}
-ul{padding-left:20px;margin:10px 0}li{margin:6px 0}
-.small{color:var(--muted);font-size:13.5px}
+.tag{display:inline-block;background:var(--chip);color:var(--chip-text);padding:6px 11px;border-radius:10px;margin:3px 3px 0 0;font-size:13px;font-weight:600}
 
-/* ---- Checklist ---- */
-.progresswrap{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+/* checklist */
+.progresswrap{display:flex;align-items:center;gap:12px;margin-bottom:4px}
 .bar{flex:1;height:9px;background:var(--chip);border-radius:99px;overflow:hidden}
-.bar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--good),var(--accent-2));transition:width .3s}
-.pct{font-weight:800;font-size:14px;min-width:42px;text-align:right}
+.bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--good),var(--accent));transition:width .3s}
+.pct{font-weight:800;font-size:14px;min-width:44px;text-align:right}
 .check{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px dashed var(--line);cursor:pointer;user-select:none}
 .check:last-of-type{border-bottom:none}
-.check input{appearance:none;width:22px;height:22px;border:2px solid var(--line-strong);border-radius:7px;
-  cursor:pointer;flex:0 0 auto;position:relative;transition:.15s}
+.check input{appearance:none;-webkit-appearance:none;width:22px;height:22px;border:2px solid var(--line);background:rgba(255,255,255,.5);border-radius:7px;cursor:pointer;flex:0 0 auto;position:relative}
 .check input:checked{background:var(--good);border-color:var(--good)}
-.check input:checked::after{content:"✓";position:absolute;inset:0;color:#fff;font-size:14px;font-weight:900;display:grid;place-items:center}
+.check input:checked::after{content:"✓";position:absolute;inset:0;color:#fff;font-size:13px;font-weight:900;display:grid;place-items:center}
 .check.done span{color:var(--muted);text-decoration:line-through}
-.reset{margin-top:14px;border:1px solid var(--line-strong);background:transparent;color:var(--muted);
-  padding:7px 12px;border-radius:9px;cursor:pointer;font-size:13px;font-weight:600}
-.reset:hover{color:var(--bad);border-color:var(--bad)}
 
-.backup-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:8px}
-.btn{display:inline-flex;align-items:center;gap:6px;justify-content:center;cursor:pointer;
-  border:1px solid var(--line-strong);background:var(--card);color:var(--text);
-  padding:11px 16px;border-radius:11px;font-size:14px;font-weight:700;font-family:inherit}
-.btn:hover{border-color:var(--accent-2);color:var(--accent-2)}
+.signals{display:grid;gap:8px;margin-top:12px}
+.signal{display:flex;gap:12px;align-items:flex-start;padding:11px 13px;border-radius:13px;border:1px solid var(--line);font-size:13.5px;background:var(--glass-2)}
+.signal .dot{width:12px;height:12px;border-radius:50%;margin-top:5px;flex:0 0 auto}
+.dot.g{background:var(--good)}.dot.y{background:var(--warn)}.dot.r{background:var(--bad)}
+
+/* medidas */
+.mform{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:12px;font-weight:700;color:var(--muted)}
+.field input{border:1px solid var(--line);background:rgba(255,255,255,.5);border-radius:12px;padding:11px 12px;font-size:15px;font-family:inherit;color:var(--text)}
+:root[data-theme="dark"] .field input{background:rgba(255,255,255,.06)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .field input{background:rgba(255,255,255,.06)}}
+.field input:focus{outline:none;border-color:var(--accent)}
+.msummary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.msummary .box{background:var(--chip);border-radius:14px;padding:12px;text-align:center}
+.msummary .box span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.msummary .box b{display:block;font-size:18px;margin-top:3px}
+.chartwrap{margin:8px 0 4px}
+.chartwrap svg{width:100%;height:150px;display:block}
+.mrow{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;padding:11px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+.mrow:last-child{border-bottom:none}
+.mrow .mdate{font-weight:700;font-size:12px;color:var(--muted);min-width:64px}
+.mdel{border:none;background:transparent;color:var(--bad);cursor:pointer;font-size:16px;padding:4px 6px;border-radius:8px}
+.empty{color:var(--muted);text-align:center;padding:16px 0;font-size:13.5px}
+
+/* botões */
+.btn{display:inline-flex;align-items:center;gap:7px;justify-content:center;cursor:pointer;font-family:inherit;
+  border:1px solid var(--line);background:var(--glass-2);color:var(--text);padding:12px 16px;border-radius:13px;font-size:14px;font-weight:700}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:linear-gradient(135deg,#2563eb,#4f8cff);color:#fff;border-color:transparent}
+.btn.block{width:100%}
+.btn.ghost{background:transparent;color:var(--muted)}
+.btn.ghost:active{color:var(--bad)}
+.row-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:12px}
 #backupMsg{text-align:center;margin-top:12px;font-weight:600}
-footer{text-align:center;color:var(--muted);font-size:13px;margin-top:24px;padding:0 10px}
+.cols{display:grid;grid-template-columns:1fr;gap:8px}
+ul{padding-left:20px;margin:9px 0}li{margin:6px 0}
 
-@media (max-width:520px){
-  .container{padding:16px 11px 60px}
-  .card{padding:18px 15px}
-  h2{font-size:19px}
-  .hero{padding:26px 20px}
-  .days{grid-template-columns:1fr}
-  .exercise{grid-template-columns:auto minmax(0,1fr) auto 52px;gap:7px;padding:10px 12px;font-size:13px}
-  .exercise .sets{font-size:11px}
-  .wlog{width:52px;padding:6px 3px}
-  .brand{display:none}
+/* ---- Tab bar ---- */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:45;display:flex;
+  padding:8px 8px calc(8px + env(safe-area-inset-bottom));gap:2px;
+  border-radius:0;border-left:none;border-right:none;border-bottom:none}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;
+  border:none;background:transparent;color:var(--muted);font-family:inherit;font-size:10.5px;font-weight:700;padding:5px 2px;border-radius:14px}
+.tab .ic{font-size:20px;line-height:1;transition:transform .15s}
+.tab.active{color:var(--accent)}
+.tab.active .ic{transform:translateY(-1px) scale(1.12)}
+.tab:active{transform:scale(.95)}
+
+@media (min-width:620px){
+  .stats{grid-template-columns:repeat(4,1fr)}
+  .cols{grid-template-columns:1fr 1fr}
 }
 @media print{
-  body{background:#fff}.topbar,.iconbtn,.reset{display:none}
-  .container{max-width:none;padding:0}
+  .appbar,.tabbar,.drawer,.scrim,.blobs,.iconbtn,.btn{display:none!important}
+  body{background:#fff}.screen{display:block!important}main{padding:0}
   .card,.hero,.day{break-inside:avoid;box-shadow:none}
-  .hero{color:#000;background:none;border:1px solid #000}
-  .hero::after{display:none}.stat{border:1px solid #ccc}.stat b,.hero h1{color:#000}
 }
 </style>
 </head>
 <body>
-<div class="container">
+<div class="blobs"><i></i><i></i><i></i></div>
 
-<div class="topbar">
-  <span class="brand">🔥 PLANO</span>
-  <nav class="nav">
-    <a href="#objetivo">Objetivo</a>
-    <a href="#calorias">Calorias</a>
-    <a href="#treino">Treino</a>
-    <a href="#cardio">Cardio</a>
-    <a href="#dieta">Dieta</a>
-    <a href="#acompanhamento">Acompanhamento</a>
-    <a href="#bulk">Ganho de massa</a>
-    <a href="#checklist">Checklist</a>
-    <a href="#dados">Backup</a>
-  </nav>
-  <button class="iconbtn" id="themeBtn" title="Alternar tema" aria-label="Alternar tema">🌙</button>
-  <button class="iconbtn" onclick="window.print()" title="Imprimir / PDF" aria-label="Imprimir">🖨️</button>
-</div>
+<header class="appbar glass">
+  <button class="iconbtn" id="menuBtn" aria-label="Abrir menu">☰</button>
+  <div class="appttl" id="screenTitle">Início</div>
+  <button class="iconbtn" id="themeBtn" aria-label="Alternar tema">🌙</button>
+</header>
 
-<section class="hero">
-  <h1>SECAR → GANHAR MASSA</h1>
-  <p class="subtitle">Plano de acompanhamento em duas fases: primeiro reduzir a gordura abdominal preservando o máximo de músculo, depois iniciar um ganho de massa controlado. Base inicial abaixo.</p>
-  <div class="grid">
-    <div class="stat"><span>Peso inicial</span><b>68,1 kg</b></div>
-    <div class="stat"><span>Altura</span><b>1,79 m</b></div>
-    <div class="stat"><span>Gordura</span><b>13,4%</b></div>
-    <div class="stat"><span>Proteína/dia</span><b>140–150 g</b></div>
+<aside class="drawer glass" id="drawer">
+  <div class="drawer-brand">
+    <img src="icon-192.png" alt="">
+    <div><b>Meu Plano</b><span>Treino &amp; Dieta</span></div>
   </div>
-</section>
+  <button class="navitem" data-screen="inicio"><span class="ni">🏠</span> Início</button>
+  <button class="navitem" data-screen="treino"><span class="ni">🏋️</span> Treino</button>
+  <button class="navitem" data-screen="dieta"><span class="ni">🥗</span> Dieta</button>
+  <button class="navitem" data-screen="medidas"><span class="ni">📏</span> Medidas</button>
+  <button class="navitem" data-screen="backup"><span class="ni">💾</span> Backup</button>
+</aside>
+<div class="scrim" id="scrim"></div>
 
-<section class="card" id="objetivo">
-  <h2>🎯 Objetivo</h2>
-  <p>Primeiro reduzir a gordura abdominal preservando o máximo possível de massa muscular. Depois, sair do déficit, estabilizar o peso e iniciar um superávit pequeno para ganhar massa sem recuperar rapidamente a barriga.</p>
-</section>
-
-<section class="card" id="calorias">
-  <h2>🔥 Estratégia de calorias</h2>
-  <div class="tablewrap">
-  <table>
-    <tr><th>Fase</th><th>Calorias</th><th>Proteína</th><th>Gordura</th><th>Carboidrato</th></tr>
-    <tr><td>Início (semanas 1–2)</td><td><b>2.400 kcal</b></td><td>150 g</td><td>65 g</td><td>~304 g</td></tr>
-    <tr><td>Se necessário</td><td><b>2.200 kcal</b></td><td>150 g</td><td>60 g</td><td>~260 g</td></tr>
-    <tr><td>Somente se necessário</td><td><b>2.000 kcal</b></td><td>150 g</td><td>60 g</td><td>~210 g</td></tr>
-  </table>
-  </div>
-  <div class="note"><b>Regra:</b> não reduzir calorias automaticamente. Se peso médio e cintura estiverem descendo em ritmo adequado, mantenha a fase atual. Alvo razoável: aproximadamente <b>0,2–0,4 kg/semana</b>.</div>
-</section>
-
-<section class="card" id="treino">
-  <h2>🏋️ Divisão de musculação — 5 dias</h2>
-  <p class="small">Foco estético: ombros, costas, peito e braços, sem negligenciar pernas. Na maioria das séries, termine com aproximadamente <b>1–3 repetições em reserva</b>.</p>
-
-  <div class="days">
-    <div class="day">
-      <div class="day-head">Dia 1 · Peito + Ombros + Tríceps</div>
-      <div class="exercise"><span>Supino reto</span><span class="sets">3×6–10</span></div>
-      <div class="exercise"><span>Supino inclinado</span><span class="sets">3×8–12</span></div>
-      <div class="exercise"><span>Crossover / crucifixo</span><span class="sets">2×10–15</span></div>
-      <div class="exercise"><span>Desenvolvimento</span><span class="sets">3×6–10</span></div>
-      <div class="exercise"><span>Elevação lateral</span><span class="sets">4×10–15</span></div>
-      <div class="exercise"><span>Tríceps na polia</span><span class="sets">3×8–12</span></div>
-      <div class="exercise"><span>Tríceps francês / corda</span><span class="sets">2×10–15</span></div>
+<main>
+  <!-- ================= INÍCIO ================= -->
+  <section class="screen active" data-screen="inicio">
+    <div class="hero">
+      <h1>Secar → Ganhar massa</h1>
+      <p>Primeiro reduzir a gordura preservando músculo. Depois, ganho de massa controlado.</p>
+      <div class="stats">
+        <div class="stat"><span>Peso inicial</span><b>68,1 kg</b></div>
+        <div class="stat"><span>Altura</span><b>1,79 m</b></div>
+        <div class="stat"><span>Gordura</span><b>13,4%</b></div>
+        <div class="stat"><span>Proteína/dia</span><b>140–150 g</b></div>
+      </div>
     </div>
 
-    <div class="day">
-      <div class="day-head">Dia 2 · Costas + Bíceps + Abdômen</div>
-      <div class="exercise"><span>Puxada alta / barra</span><span class="sets">3×6–10</span></div>
-      <div class="exercise"><span>Remada</span><span class="sets">3×8–12</span></div>
-      <div class="exercise"><span>Remada unilateral</span><span class="sets">2×8–12</span></div>
-      <div class="exercise"><span>Pulldown braço estendido</span><span class="sets">2×10–15</span></div>
-      <div class="exercise"><span>Rosca direta</span><span class="sets">3×8–12</span></div>
-      <div class="exercise"><span>Rosca martelo</span><span class="sets">2×10–15</span></div>
-      <div class="exercise"><span>Crunch na polia / máquina</span><span class="sets">3×10–15</span></div>
-      <div class="exercise"><span>Elevação de pernas</span><span class="sets">3×8–15</span></div>
-    </div>
+    <section class="card">
+      <h2>🎯 Objetivo</h2>
+      <p>Reduzir a gordura abdominal preservando o máximo de massa muscular. Depois, sair do déficit, estabilizar o peso e iniciar um superávit pequeno para ganhar massa sem recuperar rapidamente a barriga.</p>
+    </section>
 
-    <div class="day">
-      <div class="day-head">Dia 3 · Pernas</div>
-      <div class="exercise"><span>Agachamento ou hack</span><span class="sets">3×6–10</span></div>
-      <div class="exercise"><span>Leg press</span><span class="sets">3×8–12</span></div>
-      <div class="exercise"><span>Cadeira extensora</span><span class="sets">2×10–15</span></div>
-      <div class="exercise"><span>Mesa flexora</span><span class="sets">3×8–12</span></div>
-      <div class="exercise"><span>Stiff / RDL</span><span class="sets">2×8–12</span></div>
-      <div class="exercise"><span>Panturrilha</span><span class="sets">4×10–15</span></div>
-    </div>
+    <section class="card">
+      <h2>🔥 Estratégia de calorias</h2>
+      <div class="tablewrap">
+        <table>
+          <tr><th>Fase</th><th>Calorias</th><th>Prot.</th><th>Gord.</th><th>Carb.</th></tr>
+          <tr><td>Início (sem. 1–2)</td><td><b>2.400</b></td><td>150 g</td><td>65 g</td><td>~304 g</td></tr>
+          <tr><td>Se necessário</td><td><b>2.200</b></td><td>150 g</td><td>60 g</td><td>~260 g</td></tr>
+          <tr><td>Só se necessário</td><td><b>2.000</b></td><td>150 g</td><td>60 g</td><td>~210 g</td></tr>
+        </table>
+      </div>
+      <div class="note"><b>Regra:</b> não reduzir calorias automaticamente. Se peso médio e cintura estão descendo bem, mantenha a fase. Alvo: <b>0,2–0,4 kg/semana</b>.</div>
+    </section>
 
-    <div class="day">
-      <div class="day-head">Dia 4 · Ombros + Peito + Braços</div>
-      <div class="exercise"><span>Desenvolvimento</span><span class="sets">3×6–10</span></div>
-      <div class="exercise"><span>Elevação lateral</span><span class="sets">4×10–15</span></div>
-      <div class="exercise"><span>Crucifixo inverso</span><span class="sets">3×10–15</span></div>
-      <div class="exercise"><span>Supino inclinado</span><span class="sets">3×8–12</span></div>
-      <div class="exercise"><span>Crossover</span><span class="sets">2×10–15</span></div>
-      <div class="exercise"><span>Rosca inclinada</span><span class="sets">3×8–12</span></div>
-      <div class="exercise"><span>Tríceps testa / polia</span><span class="sets">3×8–12</span></div>
-    </div>
+    <section class="card">
+      <h2>💪 Depois da definição</h2>
+      <p>Não pular de 2.000 kcal direto para um grande superávit. Primeiro suba para a manutenção e veja onde o peso estabiliza. Depois faça um <b>lean bulk</b> com <b>+150–250 kcal/dia</b>, mirando <b>~0,1–0,25 kg/semana</b>.</p>
+    </section>
 
-    <div class="day">
-      <div class="day-head">Dia 5 · Costas + Posterior + Abdômen</div>
-      <div class="exercise"><span>Puxada neutra</span><span class="sets">3×8–12</span></div>
-      <div class="exercise"><span>Remada baixa</span><span class="sets">3×8–12</span></div>
-      <div class="exercise"><span>Remada unilateral</span><span class="sets">2×10–12</span></div>
-      <div class="exercise"><span>Mesa flexora</span><span class="sets">3×10–15</span></div>
-      <div class="exercise"><span>Stiff / RDL</span><span class="sets">3×6–10</span></div>
-      <div class="exercise"><span>Panturrilha</span><span class="sets">3×10–15</span></div>
-      <div class="exercise"><span>Abdominal reverso</span><span class="sets">3×10–15</span></div>
-      <div class="exercise"><span>Prancha</span><span class="sets">2×30–60s</span></div>
-    </div>
-  </div>
+    <section class="card">
+      <h2>📲 Dica</h2>
+      <p class="small">Para instalar como app: no <b>Safari</b>, toque em <b>Compartilhar</b> → <b>Adicionar à Tela de Início</b>. Depois abre em tela cheia e funciona offline.</p>
+    </section>
+  </section>
 
-  <div class="week">
-    <span class="tag">Seg · Dia 1</span>
-    <span class="tag">Ter · Dia 2</span>
-    <span class="tag">Qua · Dia 3</span>
-    <span class="tag">Qui · Descanso / cardio leve</span>
-    <span class="tag">Sex · Dia 4</span>
-    <span class="tag">Sáb · Dia 5</span>
-    <span class="tag">Dom · Descanso</span>
-  </div>
+  <!-- ================= TREINO ================= -->
+  <section class="screen" data-screen="treino">
+    <section class="card">
+      <h2>🏋️ Divisão — 5 dias</h2>
+      <p class="small">Marque o ✓ ao concluir cada exercício e anote a carga no campo <b>kg</b>. Termine a maioria das séries com ~1–3 repetições em reserva.</p>
+      <div class="days">
+        <div class="day">
+          <div class="day-head">Dia 1 · Peito + Ombros + Tríceps</div>
+          <div class="exercise"><span>Supino reto</span><span class="sets">3×6–10</span></div>
+          <div class="exercise"><span>Supino inclinado</span><span class="sets">3×8–12</span></div>
+          <div class="exercise"><span>Crossover / crucifixo</span><span class="sets">2×10–15</span></div>
+          <div class="exercise"><span>Desenvolvimento</span><span class="sets">3×6–10</span></div>
+          <div class="exercise"><span>Elevação lateral</span><span class="sets">4×10–15</span></div>
+          <div class="exercise"><span>Tríceps na polia</span><span class="sets">3×8–12</span></div>
+          <div class="exercise"><span>Tríceps francês / corda</span><span class="sets">2×10–15</span></div>
+        </div>
+        <div class="day">
+          <div class="day-head">Dia 2 · Costas + Bíceps + Abdômen</div>
+          <div class="exercise"><span>Puxada alta / barra</span><span class="sets">3×6–10</span></div>
+          <div class="exercise"><span>Remada</span><span class="sets">3×8–12</span></div>
+          <div class="exercise"><span>Remada unilateral</span><span class="sets">2×8–12</span></div>
+          <div class="exercise"><span>Pulldown braço estendido</span><span class="sets">2×10–15</span></div>
+          <div class="exercise"><span>Rosca direta</span><span class="sets">3×8–12</span></div>
+          <div class="exercise"><span>Rosca martelo</span><span class="sets">2×10–15</span></div>
+          <div class="exercise"><span>Crunch na polia / máquina</span><span class="sets">3×10–15</span></div>
+          <div class="exercise"><span>Elevação de pernas</span><span class="sets">3×8–15</span></div>
+        </div>
+        <div class="day">
+          <div class="day-head">Dia 3 · Pernas</div>
+          <div class="exercise"><span>Agachamento ou hack</span><span class="sets">3×6–10</span></div>
+          <div class="exercise"><span>Leg press</span><span class="sets">3×8–12</span></div>
+          <div class="exercise"><span>Cadeira extensora</span><span class="sets">2×10–15</span></div>
+          <div class="exercise"><span>Mesa flexora</span><span class="sets">3×8–12</span></div>
+          <div class="exercise"><span>Stiff / RDL</span><span class="sets">2×8–12</span></div>
+          <div class="exercise"><span>Panturrilha</span><span class="sets">4×10–15</span></div>
+        </div>
+        <div class="day">
+          <div class="day-head">Dia 4 · Ombros + Peito + Braços</div>
+          <div class="exercise"><span>Desenvolvimento</span><span class="sets">3×6–10</span></div>
+          <div class="exercise"><span>Elevação lateral</span><span class="sets">4×10–15</span></div>
+          <div class="exercise"><span>Crucifixo inverso</span><span class="sets">3×10–15</span></div>
+          <div class="exercise"><span>Supino inclinado</span><span class="sets">3×8–12</span></div>
+          <div class="exercise"><span>Crossover</span><span class="sets">2×10–15</span></div>
+          <div class="exercise"><span>Rosca inclinada</span><span class="sets">3×8–12</span></div>
+          <div class="exercise"><span>Tríceps testa / polia</span><span class="sets">3×8–12</span></div>
+        </div>
+        <div class="day">
+          <div class="day-head">Dia 5 · Costas + Posterior + Abdômen</div>
+          <div class="exercise"><span>Puxada neutra</span><span class="sets">3×8–12</span></div>
+          <div class="exercise"><span>Remada baixa</span><span class="sets">3×8–12</span></div>
+          <div class="exercise"><span>Remada unilateral</span><span class="sets">2×10–12</span></div>
+          <div class="exercise"><span>Mesa flexora</span><span class="sets">3×10–15</span></div>
+          <div class="exercise"><span>Stiff / RDL</span><span class="sets">3×6–10</span></div>
+          <div class="exercise"><span>Panturrilha</span><span class="sets">3×10–15</span></div>
+          <div class="exercise"><span>Abdominal reverso</span><span class="sets">3×10–15</span></div>
+          <div class="exercise"><span>Prancha</span><span class="sets">2×30–60s</span></div>
+        </div>
+      </div>
+      <div class="week">
+        <span class="tag">Seg · D1</span><span class="tag">Ter · D2</span><span class="tag">Qua · D3</span>
+        <span class="tag">Qui · descanso</span><span class="tag">Sex · D4</span><span class="tag">Sáb · D5</span><span class="tag">Dom · descanso</span>
+      </div>
+      <div class="note"><b>Progressão:</b> quando atingir o topo da faixa em todas as séries com boa técnica, suba um pouco a carga e volte para a base da faixa. Não sacrifique a execução. Os ✓ zeram sozinhos toda segunda; as cargas ficam salvas.</div>
+      <div class="row-actions"><button class="btn ghost" id="trainReset">↺ Zerar treinos da semana</button></div>
+    </section>
 
-  <div class="note"><b>Como usar:</b> marque o <b>✓</b> em cada exercício conforme for concluindo e anote a carga no campo <b>kg</b> — tudo fica salvo no seu navegador. Os checks reiniciam sozinhos toda segunda-feira; as cargas ficam salvas como referência. <b>Progressão:</b> quando conseguir o topo da faixa em todas as séries com boa técnica, aumente um pouco o peso e volte para a parte baixa da faixa.</div>
-  <div style="text-align:center"><button class="reset" id="trainReset">↺ Zerar treinos da semana</button></div>
-</section>
+    <section class="card">
+      <h2>🚶 Cardio e atividade</h2>
+      <ul>
+        <li><b>3×/semana:</b> 20–30 min de caminhada rápida além da musculação.</li>
+        <li>Intensidade moderada: consegue conversar, mas sentindo o esforço.</li>
+        <li>Esteira: ~5–6,5 km/h. Inclinação leve opcional.</li>
+        <li><b>8–10 mil passos/dia</b> como meta média.</li>
+      </ul>
+      <p class="small">Não começar com 40–60 min de cardio diário — aumente só se o progresso pedir.</p>
+    </section>
+  </section>
 
-<section class="card" id="cardio">
-  <h2>🚶 Cardio e atividade</h2>
-  <ul>
-    <li><b>3×/semana:</b> 20–30 minutos de caminhada rápida, além da musculação.</li>
-    <li>Intensidade moderada: consegue conversar, mas sente que está se exercitando.</li>
-    <li>Esteira como referência: ~5–6,5 km/h, ajustando ao condicionamento. Inclinação leve é opcional.</li>
-    <li><b>8–10 mil passos/dia</b> como meta média.</li>
-  </ul>
-  <p class="small">Não começar com 40–60 min de cardio diário. Aumentar apenas se o progresso pedir.</p>
-</section>
+  <!-- ================= DIETA ================= -->
+  <section class="screen" data-screen="dieta">
+    <section class="card">
+      <h2>🥩 Alimentação</h2>
+      <p><b>Proteína:</b> 140–150 g/dia, em ~4 refeições de <b>25–40 g</b> cada.</p>
+      <div class="cols">
+        <div>
+          <h3>Fontes de proteína</h3>
+          <span class="tag">Frango</span><span class="tag">Patinho</span><span class="tag">Carnes magras</span><span class="tag">Ovos</span><span class="tag">Peixe</span><span class="tag">Atum</span><span class="tag">Leite</span><span class="tag">Iogurte</span><span class="tag">Whey</span><span class="tag">Feijão</span><span class="tag">Lentilha</span>
+        </div>
+        <div>
+          <h3>Vegetais / verduras</h3>
+          <span class="tag">Brócolis</span><span class="tag">Couve</span><span class="tag">Cenoura</span><span class="tag">Pimentão</span><span class="tag">Tomate</span><span class="tag">Espinafre</span><span class="tag">Abobrinha</span><span class="tag">Alface</span><span class="tag">Rúcula</span><span class="tag">Agrião</span><span class="tag">Cebola</span>
+        </div>
+      </div>
+      <p>Inclua <b>2–3 porções de frutas/dia</b>. Batata e batata-doce são bons carboidratos para quem treina.</p>
+    </section>
 
-<section class="card" id="dieta">
-  <h2>🥩 Alimentação</h2>
-  <p><b>Proteína:</b> 140–150 g/dia. Tente distribuir em 4 refeições com aproximadamente <b>25–40 g cada</b>.</p>
-  <div class="cols">
-    <div>
-      <h3>Boas fontes de proteína</h3>
-      <span class="tag">Frango</span><span class="tag">Patinho</span><span class="tag">Carnes magras</span><span class="tag">Ovos</span><span class="tag">Peixe</span><span class="tag">Atum</span><span class="tag">Leite</span><span class="tag">Iogurte</span><span class="tag">Whey</span><span class="tag">Feijão</span><span class="tag">Lentilha</span>
-    </div>
-    <div>
-      <h3>Vegetais / verduras</h3>
-      <span class="tag">Brócolis</span><span class="tag">Couve</span><span class="tag">Cenoura</span><span class="tag">Pimentão</span><span class="tag">Tomate</span><span class="tag">Espinafre</span><span class="tag">Abobrinha</span><span class="tag">Alface</span><span class="tag">Rúcula</span><span class="tag">Agrião</span><span class="tag">Cebola</span>
-    </div>
-  </div>
-  <p>Inclua também cerca de <b>2–3 porções de frutas por dia</b>, conforme preferência. Batata e batata-doce são boas fontes de carboidrato para quem treina.</p>
-</section>
+    <section class="card">
+      <h2>✅ Checklist semanal</h2>
+      <div class="progresswrap"><div class="bar"><i id="barFill"></i></div><span class="pct" id="pct">0%</span></div>
+      <div id="list">
+        <label class="check"><input type="checkbox"><span>Bati ~140–150 g de proteína na maioria dos dias</span></label>
+        <label class="check"><input type="checkbox"><span>Completei meus treinos de musculação</span></label>
+        <label class="check"><input type="checkbox"><span>Fiz 3 sessões de cardio de 20–30 min</span></label>
+        <label class="check"><input type="checkbox"><span>Mantive ~8–10 mil passos/dia na média</span></label>
+        <label class="check"><input type="checkbox"><span>Registrei o peso na aba Medidas</span></label>
+        <label class="check"><input type="checkbox"><span>Medi a cintura</span></label>
+        <label class="check"><input type="checkbox"><span>Registrei cargas nos treinos</span></label>
+        <label class="check"><input type="checkbox"><span>Mantive sono e recuperação adequados</span></label>
+      </div>
+      <div class="row-actions"><button class="btn ghost" id="resetBtn">↺ Zerar semana</button></div>
+    </section>
+  </section>
 
-<section class="card" id="acompanhamento">
-  <h2>📏 Acompanhamento semanal</h2>
-  <ul>
-    <li><b>Peso:</b> pesar 3–7 manhãs por semana e usar a média semanal.</li>
-    <li><b>Cintura:</b> medir 1×/semana na altura do umbigo e, se quiser, no ponto mais estreito.</li>
-    <li><b>Fotos:</b> frente e lado, mesma iluminação/distância, a cada 2 semanas.</li>
-    <li><b>Treino:</b> registrar cargas e repetições.</li>
-  </ul>
-  <div class="signals">
-    <div class="signal"><span class="dot g"></span><span><b>Verde</b> — 0,2–0,4 kg/semana: mantenha as calorias.</span></div>
-    <div class="signal"><span class="dot y"></span><span><b>Amarelo</b> — sem queda relevante por ~2 semanas: considerar −200 kcal.</span></div>
-    <div class="signal"><span class="dot r"></span><span><b>Vermelho</b> — queda muito rápida + força caindo: déficit provavelmente excessivo, revisar.</span></div>
-  </div>
-  <div class="note">Sobre o <b>abdômen</b>: abdominais fortalecem e desenvolvem a musculatura, mas não queimam gordura especificamente na barriga. A redução abdominal virá principalmente do déficit energético, enquanto o treino ajuda a preservar/construir músculo.</div>
-</section>
+  <!-- ================= MEDIDAS ================= -->
+  <section class="screen" data-screen="medidas">
+    <section class="card">
+      <h2>📏 Registrar medida</h2>
+      <div class="mform">
+        <div class="field"><label for="mData">Data</label><input type="date" id="mData"></div>
+        <div class="field"><label for="mPeso">Peso (kg)</label><input type="number" inputmode="decimal" step="0.1" id="mPeso" placeholder="68,1"></div>
+        <div class="field"><label for="mCintura">Cintura (cm)</label><input type="number" inputmode="decimal" step="0.1" id="mCintura" placeholder="opcional"></div>
+        <div class="field"><label for="mGordura">Gordura (%)</label><input type="number" inputmode="decimal" step="0.1" id="mGordura" placeholder="opcional"></div>
+      </div>
+      <div class="row-actions"><button class="btn primary block" id="mAdd">＋ Salvar medida</button></div>
+    </section>
 
-<section class="card" id="bulk">
-  <h2>💪 Depois de atingir a definição desejada</h2>
-  <p>Não saltar diretamente de 2.000 kcal para um grande superávit. Primeiro subir para a manutenção e observar onde o peso estabiliza. Depois iniciar um <b>lean bulk</b> com aproximadamente <b>+150–250 kcal/dia</b>, mirando ganho lento de <b>~0,1–0,25 kg/semana</b>.</p>
-</section>
+    <section class="card">
+      <h2>📈 Evolução</h2>
+      <div class="msummary">
+        <div class="box"><span>Atual</span><b id="mNow">—</b></div>
+        <div class="box"><span>Variação</span><b id="mDelta">—</b></div>
+        <div class="box"><span>Registros</span><b id="mCount">0</b></div>
+      </div>
+      <div class="chartwrap" id="mChart"></div>
+      <div id="mHist"></div>
+    </section>
 
-<section class="card" id="checklist">
-  <h2>✅ Checklist semanal</h2>
-  <div class="progresswrap">
-    <div class="bar"><i id="barFill"></i></div>
-    <span class="pct" id="pct">0%</span>
-  </div>
-  <div id="list">
-    <label class="check"><input type="checkbox"><span>Bati ~140–150 g de proteína na maioria dos dias</span></label>
-    <label class="check"><input type="checkbox"><span>Completei meus treinos de musculação</span></label>
-    <label class="check"><input type="checkbox"><span>Fiz 3 sessões de caminhada / cardio de 20–30 min</span></label>
-    <label class="check"><input type="checkbox"><span>Mantive ~8–10 mil passos/dia na média</span></label>
-    <label class="check"><input type="checkbox"><span>Registrei a média do peso</span></label>
-    <label class="check"><input type="checkbox"><span>Medi a cintura</span></label>
-    <label class="check"><input type="checkbox"><span>Registrei cargas / repetições</span></label>
-    <label class="check"><input type="checkbox"><span>Mantive sono e recuperação adequados</span></label>
-  </div>
-  <button class="reset" id="resetBtn">↺ Zerar semana</button>
-</section>
+    <section class="card">
+      <h2>🧭 Como acompanhar</h2>
+      <ul>
+        <li><b>Peso:</b> pese 3–7 manhãs por semana e use a média.</li>
+        <li><b>Cintura:</b> 1×/semana na altura do umbigo.</li>
+        <li><b>Fotos:</b> frente e lado, mesma luz/distância, a cada 2 semanas.</li>
+      </ul>
+      <div class="signals">
+        <div class="signal"><span class="dot g"></span><span><b>Verde</b> — 0,2–0,4 kg/sem: mantenha as calorias.</span></div>
+        <div class="signal"><span class="dot y"></span><span><b>Amarelo</b> — sem queda por ~2 semanas: considerar −200 kcal.</span></div>
+        <div class="signal"><span class="dot r"></span><span><b>Vermelho</b> — queda rápida + força caindo: déficit excessivo, revisar.</span></div>
+      </div>
+      <div class="note"><b>Abdômen:</b> abdominais fortalecem o músculo, mas não queimam gordura localizada. A barriga reduz pelo déficit; o treino preserva/constrói músculo.</div>
+    </section>
+  </section>
 
-<section class="card" id="dados">
-  <h2>💾 Backup dos dados</h2>
-  <p class="small">Seus checks e cargas ficam salvos <b>neste aparelho</b>. Faça um backup de vez em quando — e principalmente antes de trocar de celular ou limpar o navegador — para não perder o histórico. O arquivo pode ser guardado no app Arquivos, iCloud, e-mail, etc.</p>
-  <div class="backup-actions">
-    <button class="btn" id="btnExport">📤 Exportar backup</button>
-    <label class="btn" for="fileImport">📥 Restaurar backup</label>
-    <input type="file" id="fileImport" accept="application/json,.json" hidden>
-  </div>
-  <p class="small" id="backupMsg" hidden></p>
-</section>
+  <!-- ================= BACKUP ================= -->
+  <section class="screen" data-screen="backup">
+    <section class="card">
+      <h2>💾 Backup dos dados</h2>
+      <p class="small">Seus checks, cargas e medidas ficam salvos <b>neste aparelho</b>. Faça um backup de vez em quando — e antes de trocar de celular ou limpar o navegador — para não perder o histórico.</p>
+      <div class="row-actions">
+        <button class="btn" id="btnExport">📤 Exportar backup</button>
+        <label class="btn" for="fileImport">📥 Restaurar backup</label>
+        <input type="file" id="fileImport" accept="application/json,.json" hidden>
+      </div>
+      <p class="small" id="backupMsg" hidden></p>
+    </section>
+    <section class="card">
+      <h2>ℹ️ Sobre</h2>
+      <p class="small">App pessoal, gratuito, feito em HTML/CSS/JavaScript. Funciona offline depois de instalado. A bioimpedância varia com hidratação, alimentação e horário — priorize a tendência de peso, cintura, fotos e desempenho no treino.</p>
+    </section>
+  </section>
+</main>
 
-<footer>
-  Observação: a bioimpedância varia com hidratação, alimentação, treino e horário. Use principalmente a <b>tendência de peso, cintura, fotos e desempenho no treino</b> para acompanhar a evolução.
-</footer>
-
-</div>
+<nav class="tabbar glass">
+  <button class="tab active" data-screen="inicio"><span class="ic">🏠</span>Início</button>
+  <button class="tab" data-screen="treino"><span class="ic">🏋️</span>Treino</button>
+  <button class="tab" data-screen="dieta"><span class="ic">🥗</span>Dieta</button>
+  <button class="tab" data-screen="medidas"><span class="ic">📏</span>Medidas</button>
+  <button class="tab" id="moreTab"><span class="ic">☰</span>Menu</button>
+</nav>
 
 <script>
-// ----- Tema -----
+// ---------- Tema ----------
 (function(){
-  var root=document.documentElement, btn=document.getElementById('themeBtn');
-  try{var saved=localStorage.getItem('plano-tema'); if(saved) root.setAttribute('data-theme',saved);}catch(e){}
-  function sync(){
-    var dark = root.getAttribute('data-theme')==='dark' ||
-      (!root.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    btn.textContent = dark ? '☀️' : '🌙';
-  }
+  var root=document.documentElement, btn=document.getElementById('themeBtn'), meta=document.querySelector('meta[name=theme-color]');
+  try{var s=localStorage.getItem('plano-tema'); if(s) root.setAttribute('data-theme',s);}catch(e){}
+  function dark(){return root.getAttribute('data-theme')==='dark'||(!root.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);}
+  function sync(){var d=dark();btn.textContent=d?'☀️':'🌙';if(meta)meta.setAttribute('content',d?'#0b1220':'#e7effc');}
   sync();
-  btn.addEventListener('click',function(){
-    var dark = root.getAttribute('data-theme')==='dark' ||
-      (!root.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    var next = dark ? 'light':'dark';
-    root.setAttribute('data-theme',next);
-    try{localStorage.setItem('plano-tema',next);}catch(e){}
-    sync();
-  });
+  btn.addEventListener('click',function(){var n=dark()?'light':'dark';root.setAttribute('data-theme',n);try{localStorage.setItem('plano-tema',n);}catch(e){}sync();});
 })();
 
-// ----- Checklist + progresso -----
+// ---------- Navegação (telas / drawer / tabs) ----------
+(function(){
+  var titles={inicio:'Início',treino:'Treino',dieta:'Dieta',medidas:'Medidas',backup:'Backup'};
+  var screens=document.querySelectorAll('.screen');
+  var drawer=document.getElementById('drawer'), scrim=document.getElementById('scrim');
+  function openDrawer(o){drawer.classList.toggle('open',o);scrim.classList.toggle('open',o);}
+  function show(name){
+    screens.forEach(function(s){s.classList.toggle('active',s.getAttribute('data-screen')===name);});
+    document.getElementById('screenTitle').textContent=titles[name]||'';
+    document.querySelectorAll('.tab[data-screen]').forEach(function(t){t.classList.toggle('active',t.getAttribute('data-screen')===name);});
+    document.querySelectorAll('.navitem').forEach(function(t){t.classList.toggle('active',t.getAttribute('data-screen')===name);});
+    try{localStorage.setItem('plano-tela',name);}catch(e){}
+    window.scrollTo(0,0);
+  }
+  document.querySelectorAll('[data-screen]').forEach(function(el){
+    if(el.classList.contains('screen'))return;
+    el.addEventListener('click',function(){show(el.getAttribute('data-screen'));openDrawer(false);});
+  });
+  document.getElementById('menuBtn').addEventListener('click',function(){openDrawer(!drawer.classList.contains('open'));});
+  document.getElementById('moreTab').addEventListener('click',function(){openDrawer(!drawer.classList.contains('open'));});
+  scrim.addEventListener('click',function(){openDrawer(false);});
+  var start='inicio'; try{var s=localStorage.getItem('plano-tela'); if(s&&titles[s]) start=s;}catch(e){}
+  show(start);
+})();
+
+// ---------- Treino: check + cargas ----------
+(function(){
+  function slug(s){return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');}
+  function weekKey(){var d=new Date();var o=(d.getDay()+6)%7;d.setDate(d.getDate()-o);return 'plano-ex-'+d.toISOString().slice(0,10);}
+  var doneState={}; try{var raw=localStorage.getItem(weekKey()); if(raw) doneState=JSON.parse(raw)||{};}catch(e){}
+  function saveDone(){try{localStorage.setItem(weekKey(),JSON.stringify(doneState));}catch(e){}}
+  var counters=[];
+  [].forEach.call(document.querySelectorAll('.day'),function(day){
+    var head=day.querySelector('.day-head'); var dkey=head?slug(head.textContent):'d';
+    var counter=document.createElement('span'); counter.className='daycount'; if(head) head.appendChild(counter);
+    var exs=[].slice.call(day.querySelectorAll('.exercise'));
+    function upd(){var n=exs.filter(function(ex){return ex.querySelector('.exdone').checked;}).length;counter.textContent=n+'/'+exs.length;}
+    counters.push(upd);
+    exs.forEach(function(ex){
+      var name=ex.querySelector('span'); if(name) name.classList.add('exname');
+      var exId=dkey+'-'+slug(name?name.textContent:'');
+      var chk=document.createElement('input'); chk.type='checkbox'; chk.className='exdone'; chk.checked=!!doneState[exId];
+      ex.insertBefore(chk,ex.firstChild); ex.classList.toggle('done',chk.checked);
+      chk.addEventListener('change',function(){if(chk.checked)doneState[exId]=1;else delete doneState[exId];ex.classList.toggle('done',chk.checked);saveDone();upd();});
+      var inp=document.createElement('input'); inp.type='text'; inp.inputMode='decimal'; inp.className='wlog'; inp.placeholder='kg';
+      var wk='plano-peso-'+exId; try{var v=localStorage.getItem(wk); if(v) inp.value=v;}catch(e){}
+      inp.addEventListener('input',function(){try{if(inp.value.trim())localStorage.setItem(wk,inp.value.trim());else localStorage.removeItem(wk);}catch(e){}});
+      ex.appendChild(inp);
+    });
+    upd();
+  });
+  var rb=document.getElementById('trainReset');
+  if(rb) rb.addEventListener('click',function(){doneState={};saveDone();[].forEach.call(document.querySelectorAll('.exdone'),function(c){c.checked=false;c.closest('.exercise').classList.remove('done');});counters.forEach(function(u){u();});});
+})();
+
+// ---------- Checklist semanal ----------
 (function(){
   var boxes=[].slice.call(document.querySelectorAll('#list input'));
-  var fill=document.getElementById('barFill'), pct=document.getElementById('pct');
+  var fill=document.getElementById('barFill'), pct=document.getElementById('pct'); if(!boxes.length)return;
   function key(){var d=new Date();var o=(d.getDay()+6)%7;d.setDate(d.getDate()-o);return 'plano-check-'+d.toISOString().slice(0,10);}
-  function render(){
-    var done=boxes.filter(function(b){return b.checked;}).length;
-    var p=Math.round(done/boxes.length*100);
-    fill.style.width=p+'%'; pct.textContent=p+'%';
-    boxes.forEach(function(b){b.closest('.check').classList.toggle('done',b.checked);});
-  }
+  function render(){var done=boxes.filter(function(b){return b.checked;}).length;var p=Math.round(done/boxes.length*100);fill.style.width=p+'%';pct.textContent=p+'%';boxes.forEach(function(b){b.closest('.check').classList.toggle('done',b.checked);});}
   function save(){try{localStorage.setItem(key(),JSON.stringify(boxes.map(function(b){return b.checked;})));}catch(e){}}
   function load(){try{var s=localStorage.getItem(key());if(s){var a=JSON.parse(s);boxes.forEach(function(b,i){b.checked=!!a[i];});}}catch(e){}}
   load();render();
   boxes.forEach(function(b){b.addEventListener('change',function(){save();render();});});
-  document.getElementById('resetBtn').addEventListener('click',function(){
-    boxes.forEach(function(b){b.checked=false;});save();render();
-  });
+  document.getElementById('resetBtn').addEventListener('click',function(){boxes.forEach(function(b){b.checked=false;});save();render();});
 })();
 
-// ----- Treino: check por exercício + registro de cargas -----
+// ---------- Medidas ----------
 (function(){
-  function slug(s){return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');}
-  function weekKey(){var d=new Date();var o=(d.getDay()+6)%7;d.setDate(d.getDate()-o);return 'plano-ex-'+d.toISOString().slice(0,10);}
-  var doneState={};
-  try{var raw=localStorage.getItem(weekKey()); if(raw) doneState=JSON.parse(raw)||{};}catch(e){}
-  function saveDone(){try{localStorage.setItem(weekKey(),JSON.stringify(doneState));}catch(e){}}
+  var MKEY='plano-medidas';
+  var elData=document.getElementById('mData'), elPeso=document.getElementById('mPeso'),
+      elCin=document.getElementById('mCintura'), elGor=document.getElementById('mGordura');
+  var hist=document.getElementById('mHist'), chart=document.getElementById('mChart');
+  var elNow=document.getElementById('mNow'), elDelta=document.getElementById('mDelta'), elCount=document.getElementById('mCount');
+  function load(){try{return JSON.parse(localStorage.getItem(MKEY))||[];}catch(e){return[];}}
+  function save(a){try{localStorage.setItem(MKEY,JSON.stringify(a));}catch(e){}}
+  function fmt(n){return (Math.round(n*10)/10).toString().replace('.',',');}
+  function brDate(iso){var p=iso.split('-');return p[2]+'/'+p[1];}
+  if(elData) elData.value=new Date().toISOString().slice(0,10);
 
-  var counters=[];
-  [].forEach.call(document.querySelectorAll('.day'),function(day){
-    var head=day.querySelector('.day-head');
-    var dkey=head?slug(head.textContent):'d';
-    var counter=document.createElement('span'); counter.className='daycount';
-    if(head) head.appendChild(counter);
-    var exs=[].slice.call(day.querySelectorAll('.exercise'));
-    function updateCount(){
-      var done=exs.filter(function(ex){return ex.querySelector('.exdone').checked;}).length;
-      counter.textContent=done+'/'+exs.length;
-    }
-    counters.push(updateCount);
-    exs.forEach(function(ex){
-      var name=ex.querySelector('span');
-      if(name) name.classList.add('exname');
-      var exId=dkey+'-'+slug(name?name.textContent:'');
+  function sorted(){return load().slice().sort(function(a,b){return a.data<b.data?-1:a.data>b.data?1:0;});}
 
-      var chk=document.createElement('input');
-      chk.type='checkbox'; chk.className='exdone'; chk.setAttribute('aria-label','Marcar exercício como feito');
-      chk.checked=!!doneState[exId];
-      ex.insertBefore(chk, ex.firstChild);
-      ex.classList.toggle('done',chk.checked);
-      chk.addEventListener('change',function(){
-        if(chk.checked) doneState[exId]=1; else delete doneState[exId];
-        ex.classList.toggle('done',chk.checked); saveDone(); updateCount();
-      });
-
-      var inp=document.createElement('input');
-      inp.type='text'; inp.inputMode='decimal'; inp.className='wlog'; inp.placeholder='kg';
-      inp.setAttribute('aria-label','Peso em kg');
-      var wk='plano-peso-'+exId;
-      try{var v=localStorage.getItem(wk); if(v) inp.value=v;}catch(e){}
-      inp.addEventListener('input',function(){try{
-        if(inp.value.trim()) localStorage.setItem(wk,inp.value.trim()); else localStorage.removeItem(wk);
-      }catch(e){}});
-      ex.appendChild(inp);
+  function renderChart(arr){
+    var pts=arr.filter(function(e){return e.peso!=null;});
+    if(pts.length<2){chart.innerHTML='<p class="small" style="text-align:center;padding:10px 0">Registre ao menos 2 pesos para ver o gráfico.</p>';return;}
+    var W=320,H=150,pad=24;
+    var vals=pts.map(function(e){return e.peso;});
+    var mn=Math.min.apply(null,vals), mx=Math.max.apply(null,vals);
+    if(mn===mx){mn-=1;mx+=1;} var rng=mx-mn;
+    function x(i){return pad+ i*(W-2*pad)/(pts.length-1);}
+    function y(v){return pad+ (H-2*pad)*(1-(v-mn)/rng);}
+    var d='',dots='';
+    pts.forEach(function(e,i){d+=(i?' L':'M')+x(i).toFixed(1)+' '+y(e.peso).toFixed(1);dots+='<circle cx="'+x(i).toFixed(1)+'" cy="'+y(e.peso).toFixed(1)+'" r="3.2" fill="var(--accent)"/>';});
+    var area=d+' L'+x(pts.length-1).toFixed(1)+' '+(H-pad)+' L'+x(0).toFixed(1)+' '+(H-pad)+' Z';
+    chart.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">'+
+      '<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".28"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>'+
+      '<path d="'+area+'" fill="url(#g)"/>'+
+      '<path d="'+d+'" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>'+dots+
+      '<text x="'+pad+'" y="14" font-size="10" fill="var(--muted)">'+fmt(mx)+' kg</text>'+
+      '<text x="'+pad+'" y="'+(H-6)+'" font-size="10" fill="var(--muted)">'+fmt(mn)+' kg</text>'+
+      '</svg>';
+  }
+  function render(){
+    var arr=sorted();
+    elCount.textContent=arr.length;
+    var pesos=arr.filter(function(e){return e.peso!=null;});
+    if(pesos.length){
+      var last=pesos[pesos.length-1].peso, first=pesos[0].peso, dif=last-first;
+      elNow.textContent=fmt(last)+' kg';
+      elDelta.textContent=(dif>0?'+':'')+fmt(dif)+' kg';
+      elDelta.style.color=dif<0?'var(--good)':dif>0?'var(--warn)':'var(--muted)';
+    } else {elNow.textContent='—';elDelta.textContent='—';elDelta.style.color='';}
+    renderChart(arr);
+    if(!arr.length){hist.innerHTML='<div class="empty">Nenhuma medida ainda. Registre a primeira acima. 📏</div>';return;}
+    var html='';
+    arr.slice().reverse().forEach(function(e){
+      var parts=[]; if(e.peso!=null)parts.push('<b>'+fmt(e.peso)+'</b> kg');
+      if(e.cintura!=null)parts.push(fmt(e.cintura)+' cm');
+      if(e.gordura!=null)parts.push(fmt(e.gordura)+'%');
+      html+='<div class="mrow"><span class="mdate">'+brDate(e.data)+'</span><span>'+parts.join(' · ')+'</span><button class="mdel" data-id="'+e.id+'" aria-label="Excluir">🗑</button></div>';
     });
-    updateCount();
+    hist.innerHTML=html;
+    [].forEach.call(hist.querySelectorAll('.mdel'),function(b){
+      b.addEventListener('click',function(){
+        var id=b.getAttribute('data-id');
+        save(load().filter(function(e){return String(e.id)!==String(id);}));
+        render();
+      });
+    });
+  }
+  function numOrNull(el){var v=parseFloat((el.value||'').replace(',','.'));return isNaN(v)?null:v;}
+  var add=document.getElementById('mAdd');
+  if(add) add.addEventListener('click',function(){
+    var data=elData.value||new Date().toISOString().slice(0,10);
+    var peso=numOrNull(elPeso), cin=numOrNull(elCin), gor=numOrNull(elGor);
+    if(peso==null&&cin==null&&gor==null){elPeso.focus();return;}
+    var arr=load();
+    var ex=arr.filter(function(e){return e.data===data;})[0];
+    if(ex){ if(peso!=null)ex.peso=peso; if(cin!=null)ex.cintura=cin; if(gor!=null)ex.gordura=gor; }
+    else{ arr.push({id:Date.now(),data:data,peso:peso,cintura:cin,gordura:gor}); }
+    save(arr);
+    elPeso.value='';elCin.value='';elGor.value='';
+    render();
   });
-
-  var resetBtn=document.getElementById('trainReset');
-  if(resetBtn) resetBtn.addEventListener('click',function(){
-    doneState={}; saveDone();
-    [].forEach.call(document.querySelectorAll('.exdone'),function(c){c.checked=false;c.closest('.exercise').classList.remove('done');});
-    counters.forEach(function(u){u();});
-  });
+  render();
 })();
 
-// ----- PWA: registra o service worker (funcionar offline) -----
-if('serviceWorker' in navigator){
-  window.addEventListener('load',function(){
-    navigator.serviceWorker.register('sw.js').catch(function(){});
-  });
-}
-
-// ----- Backup: exportar / restaurar -----
+// ---------- Backup ----------
 (function(){
   var msg=document.getElementById('backupMsg');
-  function show(t,ok){ if(!msg) return; msg.hidden=false; msg.textContent=t; msg.style.color=ok?'var(--good)':'var(--bad)'; }
-  function collect(){
-    var o={};
-    try{for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf('plano-')===0)o[k]=localStorage.getItem(k);}}catch(e){}
-    return o;
-  }
+  function show(t,ok){if(!msg)return;msg.hidden=false;msg.textContent=t;msg.style.color=ok?'var(--good)':'var(--bad)';}
+  function collect(){var o={};try{for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf('plano-')===0)o[k]=localStorage.getItem(k);}}catch(e){}return o;}
   var exp=document.getElementById('btnExport');
   if(exp) exp.addEventListener('click',function(){
-    var data={app:'meu-plano',versao:1,exportadoEm:new Date().toISOString(),dados:collect()};
-    var txt=JSON.stringify(data,null,2);
-    try{
-      var blob=new Blob([txt],{type:'application/json'});
-      var url=URL.createObjectURL(blob);
-      var a=document.createElement('a');
-      a.href=url; a.download='meu-plano-backup-'+new Date().toISOString().slice(0,10)+'.json';
-      document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(function(){URL.revokeObjectURL(url);},2000);
-    }catch(e){}
-    if(navigator.clipboard&&navigator.clipboard.writeText){
-      navigator.clipboard.writeText(txt).then(
-        function(){show('Backup baixado e também copiado (cole nas Notas para guardar) ✓',true);},
-        function(){show('Backup gerado ✓',true);}
-      );
-    } else { show('Backup gerado ✓',true); }
+    var txt=JSON.stringify({app:'meu-plano',versao:2,exportadoEm:new Date().toISOString(),dados:collect()},null,2);
+    try{var b=new Blob([txt],{type:'application/json'});var u=URL.createObjectURL(b);var a=document.createElement('a');a.href=u;a.download='meu-plano-backup-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u);},2000);}catch(e){}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){show('Backup baixado e copiado (cole nas Notas para guardar) ✓',true);},function(){show('Backup gerado ✓',true);});}
+    else show('Backup gerado ✓',true);
   });
   var imp=document.getElementById('fileImport');
   if(imp) imp.addEventListener('change',function(){
-    var f=imp.files&&imp.files[0]; if(!f){return;}
+    var f=imp.files&&imp.files[0]; if(!f)return;
     var r=new FileReader();
     r.onload=function(){
-      try{
-        var obj=JSON.parse(r.result);
-        var d=(obj&&obj.dados)?obj.dados:obj;
-        if(!d||typeof d!=='object'){throw 0;}
-        var n=0;
-        Object.keys(d).forEach(function(k){ if(k.indexOf('plano-')===0){ localStorage.setItem(k,d[k]); n++; } });
-        show(n+' registros restaurados. Recarregando…',true);
-        setTimeout(function(){location.reload();},900);
-      }catch(e){ show('Arquivo inválido. Selecione um backup exportado por este app.',false); }
+      try{var obj=JSON.parse(r.result);var d=(obj&&obj.dados)?obj.dados:obj;if(!d||typeof d!=='object')throw 0;
+        var n=0;Object.keys(d).forEach(function(k){if(k.indexOf('plano-')===0){localStorage.setItem(k,d[k]);n++;}});
+        show(n+' registros restaurados. Recarregando…',true);setTimeout(function(){location.reload();},900);
+      }catch(e){show('Arquivo inválido. Selecione um backup exportado por este app.',false);}
       imp.value='';
     };
     r.readAsText(f);
   });
 })();
+
+// ---------- PWA ----------
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}
 </script>
 </body>
 </html>
