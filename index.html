@@ -2,8 +2,17 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Plano — Secar → Ganhar Massa</title>
+<meta name="description" content="Plano de treino e dieta com registro de treinos e cargas, funcionando offline.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#111827">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Meu Plano">
 <style>
 :root{
   --bg:#eef1f5; --card:#ffffff; --text:#141b26; --muted:#5b6675;
@@ -139,6 +148,12 @@ ul{padding-left:20px;margin:10px 0}li{margin:6px 0}
   padding:7px 12px;border-radius:9px;cursor:pointer;font-size:13px;font-weight:600}
 .reset:hover{color:var(--bad);border-color:var(--bad)}
 
+.backup-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;justify-content:center;cursor:pointer;
+  border:1px solid var(--line-strong);background:var(--card);color:var(--text);
+  padding:11px 16px;border-radius:11px;font-size:14px;font-weight:700;font-family:inherit}
+.btn:hover{border-color:var(--accent-2);color:var(--accent-2)}
+#backupMsg{text-align:center;margin-top:12px;font-weight:600}
 footer{text-align:center;color:var(--muted);font-size:13px;margin-top:24px;padding:0 10px}
 
 @media (max-width:520px){
@@ -175,6 +190,7 @@ footer{text-align:center;color:var(--muted);font-size:13px;margin-top:24px;paddi
     <a href="#acompanhamento">Acompanhamento</a>
     <a href="#bulk">Ganho de massa</a>
     <a href="#checklist">Checklist</a>
+    <a href="#dados">Backup</a>
   </nav>
   <button class="iconbtn" id="themeBtn" title="Alternar tema" aria-label="Alternar tema">🌙</button>
   <button class="iconbtn" onclick="window.print()" title="Imprimir / PDF" aria-label="Imprimir">🖨️</button>
@@ -352,6 +368,17 @@ footer{text-align:center;color:var(--muted);font-size:13px;margin-top:24px;paddi
   <button class="reset" id="resetBtn">↺ Zerar semana</button>
 </section>
 
+<section class="card" id="dados">
+  <h2>💾 Backup dos dados</h2>
+  <p class="small">Seus checks e cargas ficam salvos <b>neste aparelho</b>. Faça um backup de vez em quando — e principalmente antes de trocar de celular ou limpar o navegador — para não perder o histórico. O arquivo pode ser guardado no app Arquivos, iCloud, e-mail, etc.</p>
+  <div class="backup-actions">
+    <button class="btn" id="btnExport">📤 Exportar backup</button>
+    <label class="btn" for="fileImport">📥 Restaurar backup</label>
+    <input type="file" id="fileImport" accept="application/json,.json" hidden>
+  </div>
+  <p class="small" id="backupMsg" hidden></p>
+</section>
+
 <footer>
   Observação: a bioimpedância varia com hidratação, alimentação, treino e horário. Use principalmente a <b>tendência de peso, cintura, fotos e desempenho no treino</b> para acompanhar a evolução.
 </footer>
@@ -452,6 +479,61 @@ footer{text-align:center;color:var(--muted);font-size:13px;margin-top:24px;paddi
     doneState={}; saveDone();
     [].forEach.call(document.querySelectorAll('.exdone'),function(c){c.checked=false;c.closest('.exercise').classList.remove('done');});
     counters.forEach(function(u){u();});
+  });
+})();
+
+// ----- PWA: registra o service worker (funcionar offline) -----
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  });
+}
+
+// ----- Backup: exportar / restaurar -----
+(function(){
+  var msg=document.getElementById('backupMsg');
+  function show(t,ok){ if(!msg) return; msg.hidden=false; msg.textContent=t; msg.style.color=ok?'var(--good)':'var(--bad)'; }
+  function collect(){
+    var o={};
+    try{for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf('plano-')===0)o[k]=localStorage.getItem(k);}}catch(e){}
+    return o;
+  }
+  var exp=document.getElementById('btnExport');
+  if(exp) exp.addEventListener('click',function(){
+    var data={app:'meu-plano',versao:1,exportadoEm:new Date().toISOString(),dados:collect()};
+    var txt=JSON.stringify(data,null,2);
+    try{
+      var blob=new Blob([txt],{type:'application/json'});
+      var url=URL.createObjectURL(blob);
+      var a=document.createElement('a');
+      a.href=url; a.download='meu-plano-backup-'+new Date().toISOString().slice(0,10)+'.json';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function(){URL.revokeObjectURL(url);},2000);
+    }catch(e){}
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(
+        function(){show('Backup baixado e também copiado (cole nas Notas para guardar) ✓',true);},
+        function(){show('Backup gerado ✓',true);}
+      );
+    } else { show('Backup gerado ✓',true); }
+  });
+  var imp=document.getElementById('fileImport');
+  if(imp) imp.addEventListener('change',function(){
+    var f=imp.files&&imp.files[0]; if(!f){return;}
+    var r=new FileReader();
+    r.onload=function(){
+      try{
+        var obj=JSON.parse(r.result);
+        var d=(obj&&obj.dados)?obj.dados:obj;
+        if(!d||typeof d!=='object'){throw 0;}
+        var n=0;
+        Object.keys(d).forEach(function(k){ if(k.indexOf('plano-')===0){ localStorage.setItem(k,d[k]); n++; } });
+        show(n+' registros restaurados. Recarregando…',true);
+        setTimeout(function(){location.reload();},900);
+      }catch(e){ show('Arquivo inválido. Selecione um backup exportado por este app.',false); }
+      imp.value='';
+    };
+    r.readAsText(f);
   });
 })();
 </script>
